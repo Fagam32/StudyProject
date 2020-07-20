@@ -2,6 +2,8 @@ package com.ivolodin.dao;
 
 import com.ivolodin.entities.Station;
 
+import java.util.List;
+
 public interface StationDao {
 
     Station getById(int id);
@@ -14,4 +16,5 @@ public interface StationDao {
 
     void addStation(Station station);
 
+    List<Station> getAll();
 }

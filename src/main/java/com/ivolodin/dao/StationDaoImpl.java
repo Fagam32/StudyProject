@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.List;
 
 @Service
 public class StationDaoImpl implements StationDao {
@@ -49,5 +50,11 @@ public class StationDaoImpl implements StationDao {
         entityManager.getTransaction().begin();
         entityManager.persist(station);
         entityManager.getTransaction().commit();
+    }
+
+    @Override
+    public List getAll() {
+        Query query = entityManager.createQuery("select e from Station e");
+        return query.getResultList();
     }
 }

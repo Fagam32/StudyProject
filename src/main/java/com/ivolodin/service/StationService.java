@@ -5,6 +5,8 @@ import com.ivolodin.entities.Station;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class StationService {
 
@@ -17,5 +19,9 @@ public class StationService {
 
     public void addStation(String stationName) {
         stationDao.addStation(new Station(stationName));
+    }
+
+    public List<Station> getAllStations() {
+        return stationDao.getAll();
     }
 }
