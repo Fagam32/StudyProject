@@ -15,10 +15,8 @@ public class AppInitializer implements WebApplicationInitializer {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
         rootContext.register(WebConfiguration.class);
 
-        // Manage the lifecycle of the root application context
         servletContext.addListener(new ContextLoaderListener(rootContext));
 
-        // Register and map the dispatcher servlet
         ServletRegistration.Dynamic dispatcher =
                 servletContext.addServlet("dispatcher", new DispatcherServlet(rootContext));
         dispatcher.setLoadOnStartup(1);
