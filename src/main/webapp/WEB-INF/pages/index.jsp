@@ -9,10 +9,7 @@
     <title>Add Station</title>
 </head>
 <body>
-<div class="container">
-    <a href="addStation">Add Station</a>
-    <a href="addEdge">Add Edge</a>
-    <a href="addTrain">Add Train</a>
-</div>
+<%@include file="topNavigationMenu.jsp" %>
+<%@include file="bottomNavigationMenu.jsp" %>
 </body>
 </html>

@@ -51,11 +51,11 @@ public class StationController {
     }
 
     @PostMapping("/addEdge")
-    public ModelAndView addEdge(@RequestParam(name = "stationName1") String stationName1,
-                                @RequestParam(name = "stationName2") String stationName2,
+    public ModelAndView addEdge(@RequestParam(name = "frStat") String frStat,
+                                @RequestParam(name = "toStat") String toStat,
                                 @RequestParam(name = "distance") long distanceInMinutes) {
 
-        stationService.addEdge(stationName1, stationName2, distanceInMinutes);
+        stationService.addEdge(frStat, toStat, distanceInMinutes);
 
         ModelAndView modelAndView = new ModelAndView("addEdge");
         List<StationConnect> allEdges = stationService.getAllEdges();

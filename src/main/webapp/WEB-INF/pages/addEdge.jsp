@@ -12,17 +12,18 @@
 </head>
 
 <body>
+<%@include file="topNavigationMenu.jsp" %>
 <div class="container">
     <form method="post">
         <div class="form-row">
             <div class="form-group col-md-5">
                 <label for="InputStationName1">First Station</label>
-                <input type="text" class="form-control" id="InputStationName1" name="stationName1">
+                <input type="text" class="form-control" id="InputStationName1" name="frStat">
             </div>
 
             <div class="form-group col-md-5">
                 <label for="InputStationName2">Second Station</label>
-                <input type="text" class="form-control" id="InputStationName2" name="stationName2">
+                <input type="text" class="form-control" id="InputStationName2" name="toStat">
             </div>
 
             <div class="form-group col-md-2">
@@ -62,5 +63,6 @@
     </table>
     <a href="addStation">Stations</a>
 </div>
+<%@include file="bottomNavigationMenu.jsp" %>
 </body>
 </html>
