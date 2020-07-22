@@ -2,14 +2,15 @@ package com.ivolodin.dao;
 
 import com.ivolodin.entities.Station;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
-@Service
+@Repository
 public class StationDaoImpl implements StationDao {
 
     private final EntityManager entityManager;
@@ -28,7 +29,12 @@ public class StationDaoImpl implements StationDao {
     public Station getByName(String name) {
         TypedQuery<Station> query = entityManager.createQuery("select s from Station s where s.name = :name", Station.class);
         query.setParameter("name", name);
-        return query.getSingleResult();
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException ignored) {
+            return null;
+        }
     }
 
     @Override
