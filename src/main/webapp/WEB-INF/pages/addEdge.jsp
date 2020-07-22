@@ -61,8 +61,7 @@
         %>
         </tbody>
     </table>
-    <a href="addStation">Stations</a>
-</div>
+    </div>
 <%@include file="bottomNavigationMenu.jsp" %>
 </body>
 </html>
