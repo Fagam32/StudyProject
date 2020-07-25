@@ -23,7 +23,7 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="trainDropdown">
                     <a class="dropdown-item" href="addTrain">Add new train</a>
-                    <a class="dropdown-item disabled" href="deleteTrain">Delete train</a>
+                    <a class="dropdown-item" href="deleteTrain">Delete train</a>
                 </div>
             </li>
             <li class="nav-item dropdown">

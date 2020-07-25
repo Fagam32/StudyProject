@@ -6,7 +6,8 @@ import com.ivolodin.entities.Station;
 import com.ivolodin.entities.StationConnect;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import org.jgrapht.graph.SimpleDirectedGraph;
+import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Service
 public class StationGraph {
-    private final SimpleDirectedWeightedGraph<Station, DefaultWeightedEdge> graph;
+    private final AsSynchronizedGraph<Station, DefaultWeightedEdge> graph;
 
     private final StationDao stationDao;
 
@@ -27,7 +28,7 @@ public class StationGraph {
 
         this.stationConnectDao = stationConnectDao;
 
-        graph = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
+        graph = new AsSynchronizedGraph<>(new SimpleDirectedGraph<>(DefaultWeightedEdge.class));
 
         List<Station> allStations = stationDao.getAll();
         for (Station s : allStations)

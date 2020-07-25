@@ -84,4 +84,9 @@ public class TrainService {
         return trainDao.getAll();
     }
 
+    public void deleteTrainById(int trainId) {
+        Train train = trainDao.getById(trainId);
+        if (train != null)
+            trainDao.delete(train);
+    }
 }

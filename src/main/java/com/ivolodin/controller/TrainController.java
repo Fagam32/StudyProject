@@ -36,4 +36,21 @@ public class TrainController {
         modelAndView.addObject("trainList", trainService.getAllTrains());
         return modelAndView;
     }
+
+    @GetMapping("/deleteTrain")
+    public ModelAndView prepareToDelete() {
+        ModelAndView modelAndView = new ModelAndView("deleteTrain");
+        modelAndView.addObject("trainList", trainService.getAllTrains());
+        return modelAndView;
+    }
+
+    @PostMapping("/deleteTrain")
+    public ModelAndView deleteTrain(@RequestParam(name = "trainId") int trainId) {
+        ModelAndView modelAndView = new ModelAndView("deleteTrain");
+
+        trainService.deleteTrainById(trainId);
+
+        modelAndView.addObject("trainList", trainService.getAllTrains());
+        return modelAndView;
+    }
 }

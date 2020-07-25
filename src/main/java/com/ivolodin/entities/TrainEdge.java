@@ -20,7 +20,7 @@ public class TrainEdge {
     private int id;
 
     @JoinColumn(name = "train")
-    @OneToOne
+    @ManyToOne
     private Train train;
 
     @JoinColumn(name = "edge")

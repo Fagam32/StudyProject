@@ -1,10 +1,15 @@
 package com.ivolodin.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "passengers")
 public class Passenger {
     @Id
@@ -23,31 +28,4 @@ public class Passenger {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "passenger")
     private List<Ticket> tickets;
 
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public LocalDate getBirth() {
-        return birth;
-    }
-
-    public void setBirth(LocalDate birth) {
-        this.birth = birth;
-    }
 }

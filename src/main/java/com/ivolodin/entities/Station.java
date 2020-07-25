@@ -1,9 +1,14 @@
 package com.ivolodin.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "stations")
 public class Station {
     @Id
@@ -23,23 +28,4 @@ public class Station {
         this.name = stationName;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Train> getTrainList() {
-        return trainList;
-    }
-
-    public void setTrainList(List<Train> trainList) {
-        this.trainList = trainList;
-    }
 }

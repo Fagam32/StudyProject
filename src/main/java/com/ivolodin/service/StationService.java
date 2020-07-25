@@ -4,26 +4,24 @@ import com.ivolodin.dao.StationConnectDao;
 import com.ivolodin.dao.StationDao;
 import com.ivolodin.entities.Station;
 import com.ivolodin.entities.StationConnect;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class StationService {
 
+    @Autowired
     private final StationDao stationDao;
 
+    @Autowired
     private final StationConnectDao stationConnectDao;
 
-    private final StationGraph stationGraph;
-
     @Autowired
-    public StationService(StationDao stationDao, StationConnectDao stationConnectDao, StationGraph stationGraph) {
-        this.stationDao = stationDao;
-        this.stationConnectDao = stationConnectDao;
-        this.stationGraph = stationGraph;
-    }
+    private final StationGraph stationGraph;
 
     public void addStation(String stationName) {
         Station station = new Station(stationName);
@@ -42,7 +40,7 @@ public class StationService {
             StationConnect edge = stationConnectDao.getConnect(frStat, toStat);
             if (edge == null) {
                 stationConnectDao.addConnect(new StationConnect(frStat, toStat, distance));
-                stationGraph.addEdge(frStat,toStat, distance);
+                stationGraph.addEdge(frStat, toStat, distance);
             } else {
                 edge.setDistanceInMinutes(distance);
                 stationConnectDao.update(edge);
@@ -51,7 +49,7 @@ public class StationService {
         }
     }
 
-    public Station getStationByName(String stat){
+    public Station getStationByName(String stat) {
         return stationDao.getByName(stat);
     }
 
