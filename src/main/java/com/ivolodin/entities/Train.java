@@ -38,7 +38,7 @@ public class Train {
     @OneToMany(mappedBy = "train", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Ticket> tickets;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train")
     private List<TrainEdge> path;
 
     public Train(int seatsNumber, Station fromStation, Station toStation, LocalDateTime departure) {
