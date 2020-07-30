@@ -18,7 +18,7 @@ public class Station {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Train> trainList;
 
     public Station() {
