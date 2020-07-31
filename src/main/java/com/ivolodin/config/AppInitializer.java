@@ -13,9 +13,8 @@ public class AppInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext servletContext) {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
-        rootContext.register(WebConfiguration.class, EntityManagerInitializer.class);
+        rootContext.register(WebConfiguration.class, EntityManagerInitializer.class, SecurityConfiguration.class);
         servletContext.addListener(new ContextLoaderListener(rootContext));
-
         ServletRegistration.Dynamic dispatcher =
                 servletContext.addServlet("dispatcher", new DispatcherServlet(rootContext));
         dispatcher.setLoadOnStartup(1);

@@ -7,6 +7,7 @@ import com.ivolodin.entities.StationConnect;
 import com.ivolodin.entities.Train;
 import com.ivolodin.entities.TrainEdge;
 import com.ivolodin.utils.Utils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,24 +16,18 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class TrainService {
-
+    @Autowired
     private final StationGraph graph;
-
+    @Autowired
     private final TrainDao trainDao;
-
+    @Autowired
     private final TrainEdgeDao trainEdgeDao;
-
+    @Autowired
     private final StationService stationService;
 
-    @Autowired
-    public TrainService(TrainDao trainDao, StationGraph graph, StationService stationService, TrainEdgeDao trainEdgeDao) {
-        this.trainDao = trainDao;
-        this.graph = graph;
-        this.stationService = stationService;
-        this.trainEdgeDao = trainEdgeDao;
-    }
 
     public void makeNewTrain(String frStat, String toStat, String departure, int seats) {
         Station frStation = stationService.getStationByName(frStat);

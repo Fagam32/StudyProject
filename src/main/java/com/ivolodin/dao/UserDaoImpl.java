@@ -1,6 +1,7 @@
 package com.ivolodin.dao;
 
 import com.ivolodin.entities.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -8,15 +9,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Repository
 public class UserDaoImpl implements UserDao {
 
-    private final EntityManager entityManager;
-
     @Autowired
-    public UserDaoImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    private final EntityManager entityManager;
 
     @Override
     public User getById(int id) {
