@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -23,9 +26,25 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getByUsername(String name) {
-        Query query = entityManager.createQuery("select user from User user where user.userName = :name");
+        TypedQuery<User> query = entityManager.createQuery("select u from User u where u.userName = :name", User.class);
         query.setParameter("name", name);
-        return (User) query.getSingleResult();
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException ignored) {
+            return null;
+        }
+    }
+
+    @Override
+    public User getByEmail(String email) {
+        TypedQuery<User> query = entityManager.createQuery("select u from User u where u.email = :email", User.class);
+        query.setParameter("email", email);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException ignored) {
+            return null;
+        }
     }
 
     @Override

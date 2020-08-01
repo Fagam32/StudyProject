@@ -1,5 +1,6 @@
 package com.ivolodin.config;
 
+import com.ivolodin.entities.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +29,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/stations", "/addTrain", "/deleteTrain", "/addEdge", "/deleteEdge").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/stations", "/addTrain", "/deleteTrain", "/addEdge", "/deleteEdge").hasAnyAuthority(Role.ADMIN.name())
                 .antMatchers("/", "/index", "/login", "/registration", "/logout").permitAll()
                 .anyRequest().authenticated()
                 .and()

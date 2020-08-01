@@ -22,4 +22,16 @@ public class UserService implements UserDetailsService {
         User user = userDao.getByUsername(s);
         return new UserDetailsModel(user);
     }
+
+    public User getUserByEmail(String email){
+        return userDao.getByUsername(email);
+    }
+
+    public User getUserByUsername(String name){
+        return userDao.getByUsername(name);
+    }
+
+    public void addUser(User user) {
+        userDao.add(user);
+    }
 }

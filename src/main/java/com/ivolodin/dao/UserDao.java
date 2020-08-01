@@ -9,6 +9,8 @@ public interface UserDao {
 
     User getByUsername(String name);
 
+    User getByEmail(String email);
+
     void update(User user);
 
     void delete(User user);
