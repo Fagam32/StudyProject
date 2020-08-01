@@ -8,7 +8,7 @@
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <title>Login</title>
 </head>
-<%@include file="topNavigationMenu.jsp" %>
+<%@include file="parts/topNavigationMenu.jsp" %>
 <body class="text-center">
 <div class="container">
     <div class="row justify-content-center align-items-center" style="height:100vh">
@@ -27,5 +27,5 @@
     </div>
 </div>
 </body>
-<%@include file="bottomNavigationMenu.jsp" %>
+<%@include file="parts/bottomNavigationMenu.jsp" %>
 </html>

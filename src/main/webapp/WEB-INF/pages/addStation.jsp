@@ -11,7 +11,7 @@
     <title>Add Station</title>
 </head>
 
-<%@include file="topNavigationMenu.jsp" %>
+<%@include file="parts/topNavigationMenu.jsp" %>
 <body>
 <div class="container">
     <form method="post">
@@ -46,6 +46,6 @@
         </tbody>
     </table>
 </div>
-<%@include file="bottomNavigationMenu.jsp" %>
+<%@include file="parts/bottomNavigationMenu.jsp" %>
 </body>
 </html>

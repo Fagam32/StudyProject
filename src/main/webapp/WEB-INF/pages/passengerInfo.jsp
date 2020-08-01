@@ -9,7 +9,7 @@
     <title>Add Station</title>
 </head>
 <body class="text-center">
-<%@include file="topNavigationMenu.jsp" %>
+<%@include file="parts/topNavigationMenu.jsp" %>
 <div class="container">
     <div class="row justify-content-center align-items-center" style="height:100vh ">
         <form method="post">
@@ -26,6 +26,6 @@
     </div>
 </div>
 
-<%@include file="bottomNavigationMenu.jsp" %>
+<%@include file="parts/bottomNavigationMenu.jsp" %>
 </body>
 </html>

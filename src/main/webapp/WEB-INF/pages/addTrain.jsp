@@ -9,7 +9,7 @@
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <title>Add Train</title>
 </head>
-<%@include file="topNavigationMenu.jsp" %>
+<%@include file="parts/topNavigationMenu.jsp" %>
 <body>
 <div class="container">
     <form method="post">
@@ -61,6 +61,6 @@
         <button type="submit" class="btn btn-primary">Add</button>
     </form>
 </div>
-<%@include file="bottomNavigationMenu.jsp" %>
+<%@include file="parts/bottomNavigationMenu.jsp" %>
 </body>
 </html>

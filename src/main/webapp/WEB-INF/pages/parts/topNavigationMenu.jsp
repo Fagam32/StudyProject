@@ -9,7 +9,11 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-
+<%
+    boolean logged = false;
+    if (request.getRemoteUser() != null)
+        logged = true;
+%>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
@@ -47,18 +51,19 @@
                 </div>
             </li>
         </ul>
-        <a class="my-2 my-lg-0"
-           href="<%if (request.getRemoteUser() != null)
-                   out.print("/logout");
-               else
-                   out.print("/login");
-            %>"
-        >
-            <%
-                if (request.getRemoteUser() != null)
-                    out.print("Logout");
-                else out.print("Login");
-            %>
-        </a>
+        <%if (logged) {%>
+        <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle my-2 my-lg-0" href="#" id="profileDropdown" role="button"
+               data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+                Profile
+            </a>
+            <div class="dropdown-menu" aria-labelledby="profileDropdown">
+                <a class="dropdown-item" href="/passengerInfo">Settings</a>
+                <a class="dropdown-item" href="/logout">Logout</a>
+            </div>
+        </div><%} else {%>
+        <a class="my-2 my-lg-0" href="/login">Login</a>
+        <%}%>
     </div>
 </nav>

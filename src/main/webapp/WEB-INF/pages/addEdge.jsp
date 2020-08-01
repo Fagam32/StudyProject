@@ -12,7 +12,7 @@
 </head>
 
 <body>
-<%@include file="topNavigationMenu.jsp" %>
+<%@include file="parts/topNavigationMenu.jsp" %>
 <div class="container">
     <form method="post">
         <div class="form-row">
@@ -62,6 +62,6 @@
         </tbody>
     </table>
     </div>
-<%@include file="bottomNavigationMenu.jsp" %>
+<%@include file="parts/bottomNavigationMenu.jsp" %>
 </body>
 </html>
