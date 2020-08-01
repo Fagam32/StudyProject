@@ -1,17 +1,16 @@
 package com.ivolodin.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Entity
 @Table(name = "users")
 public class User {
@@ -27,6 +26,18 @@ public class User {
 
     @Column(name = "password")
     private String password;
+
+    @Column
+    private String name;
+
+    @Column
+    private String surname;
+
+    @Column
+    private LocalDate birthDate;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private Set<Ticket> tickets;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
