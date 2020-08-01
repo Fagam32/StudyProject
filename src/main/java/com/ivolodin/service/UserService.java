@@ -1,6 +1,7 @@
 package com.ivolodin.service;
 
 import com.ivolodin.dao.UserDao;
+import com.ivolodin.entities.Role;
 import com.ivolodin.entities.User;
 import com.ivolodin.model.UserDetailsModel;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
 
 @RequiredArgsConstructor
 @Service
@@ -23,15 +26,30 @@ public class UserService implements UserDetailsService {
         return new UserDetailsModel(user);
     }
 
-    public User getUserByEmail(String email){
+    public User getUserByEmail(String email) {
         return userDao.getByUsername(email);
     }
 
-    public User getUserByUsername(String name){
+    public User getUserByUsername(String name) {
         return userDao.getByUsername(name);
     }
 
-    public void addUser(User user) {
-        userDao.add(user);
+    public boolean registerNewUser(String email, String username, String password) {
+        User user = userDao.getByUsername(username);
+        user = userDao.getByEmail(email);
+        if (user == null) {
+            user = new User();
+            user.setUserName(username);
+            user.setEmail(email);
+            user.setPassword(password);
+            user.setRoles(Collections.singleton(Role.USER));
+            userDao.add(user);
+            return true;
+        }
+        else return false;
+    }
+
+    public void save(User user) {
+        userDao.update(user);
     }
 }

@@ -13,10 +13,8 @@
 <div class="container">
     <div class="row justify-content-center align-items-center" style="height:100vh">
         <div class="col-3 card card-body">
-            <% if (request.getAttribute("userAlreadyExists") != null) {
-            %>
-            <jsp:text>User already exists</jsp:text>
-            <% } %>
+            <%if (request.getParameter("userAlreadyExists") != null)
+                out.print("User already exists");%>
             <form method="post" autocomplete="off">
                 <div class="form-group">
                     <input type="email" class="form-control" name="email" placeholder="some@some.com">

@@ -10,13 +10,11 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "passengerId")
-    private Passenger passenger;
-
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "trainId")
     private Train train;
 
+    @ManyToOne
+    private User user;
 
 }

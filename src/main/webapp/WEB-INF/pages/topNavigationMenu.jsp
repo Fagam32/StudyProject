@@ -47,5 +47,18 @@
                 </div>
             </li>
         </ul>
+        <a class="my-2 my-lg-0"
+           href="<%if (request.getRemoteUser() != null)
+                   out.print("/logout");
+               else
+                   out.print("/login");
+            %>"
+        >
+            <%
+                if (request.getRemoteUser() != null)
+                    out.print("Logout");
+                else out.print("Login");
+            %>
+        </a>
     </div>
 </nav>
