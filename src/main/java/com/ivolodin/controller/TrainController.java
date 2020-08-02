@@ -27,9 +27,9 @@ public class TrainController {
 
     @PostMapping("/addTrain")
     public String addNewTrain(@RequestParam(name = "fromStation") String frStat,
-                                    @RequestParam(name = "toStation") String toStat,
-                                    @RequestParam(name = "date") String departure,
-                                    @RequestParam(name = "seats") int seats
+                              @RequestParam(name = "toStation") String toStat,
+                              @RequestParam(name = "date") String departure,
+                              @RequestParam(name = "seats") int seats
     ) {
         trainService.makeNewTrain(frStat, toStat, departure, seats);
         return "redirect:/addTrain";

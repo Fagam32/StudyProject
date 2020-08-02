@@ -45,8 +45,7 @@ public class UserService implements UserDetailsService {
             user.setRoles(Collections.singleton(Role.USER));
             userDao.add(user);
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     public void save(User user) {

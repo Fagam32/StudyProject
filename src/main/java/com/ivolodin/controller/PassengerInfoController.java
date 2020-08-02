@@ -28,7 +28,6 @@ public class PassengerInfoController {
         ModelAndView modelAndView = new ModelAndView("passengerInfo");
         String userName = principal.getName();
         User user = userService.getUserByUsername(userName);
-        System.out.println(user.toString());
         modelAndView.addObject("email", user.getEmail());
         modelAndView.addObject("name", user.getName());
         modelAndView.addObject("surname", user.getSurname());

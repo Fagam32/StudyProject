@@ -1,8 +1,11 @@
 package com.ivolodin.dao;
 
+import com.ivolodin.entities.Station;
+import com.ivolodin.entities.Train;
 import com.ivolodin.entities.TrainEdge;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TrainEdgeDao {
 
@@ -15,4 +18,9 @@ public interface TrainEdgeDao {
     void addEdge(TrainEdge edge);
 
     List<TrainEdge> getAll();
+
+    Set<Train> getTrainsPassingFromThis(Station fr);
+
+    Set<Train> getTrainsPassingToThis(Station to);
+
 }

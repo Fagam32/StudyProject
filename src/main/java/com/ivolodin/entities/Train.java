@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -35,10 +36,10 @@ public class Train {
     @Column(name = "arrival")
     private LocalDateTime arrival;
 
-    @OneToMany(mappedBy = "train", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Ticket> tickets;
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "train")
+    private Set<Ticket> tickets;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train")
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "train")
     private List<TrainEdge> path;
 
     public Train(int seatsNumber, Station fromStation, Station toStation, LocalDateTime departure) {

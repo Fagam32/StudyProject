@@ -1,7 +1,15 @@
 package com.ivolodin.entities;
 
-import javax.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "tickets")
 public class Ticket {
@@ -10,11 +18,27 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "trainId")
+    @ManyToOne(fetch = FetchType.EAGER)
     private Train train;
 
+    @JoinColumn(name = "userId")
     @ManyToOne
     private User user;
+
+    @JoinColumn(name = "fromStation")
+    @ManyToOne
+    private Station frStation;
+
+    @JoinColumn(name = "toStation")
+    @ManyToOne
+    private Station toStation;
+
+    @Column
+    private LocalDateTime departure;
+
+    @Column
+    private LocalDateTime arrival;
+
 
 }

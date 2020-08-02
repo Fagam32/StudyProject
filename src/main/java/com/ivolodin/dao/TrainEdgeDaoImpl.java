@@ -1,11 +1,15 @@
 package com.ivolodin.dao;
 
+import com.ivolodin.entities.Station;
 import com.ivolodin.entities.TrainEdge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.HashSet;
 import java.util.List;
+
 @Repository
 public class TrainEdgeDaoImpl implements TrainEdgeDao {
 
@@ -25,7 +29,7 @@ public class TrainEdgeDaoImpl implements TrainEdgeDao {
     @Override
     public void update(TrainEdge edge) {
         entityManager.getTransaction().begin();
-        entityManager.refresh(edge);
+        entityManager.merge(edge);
         entityManager.getTransaction().commit();
     }
 
@@ -47,4 +51,22 @@ public class TrainEdgeDaoImpl implements TrainEdgeDao {
     public List getAll() {
         return entityManager.createQuery("select edge from TrainEdge edge").getResultList();
     }
+
+    @Override
+    public HashSet getTrainsPassingFromThis(Station fr) {
+        Query query = entityManager.createQuery
+                ("select train from Train train, TrainEdge edge where edge.stationConnect.from.id = :id");
+        query.setParameter("id", fr.getId());
+        return new HashSet<>(query.getResultList());
+    }
+
+    @Override
+    public HashSet getTrainsPassingToThis(Station to) {
+        Query query = entityManager.createQuery
+                ("select train from Train train, TrainEdge edge where edge.stationConnect.to.id = :id");
+        query.setParameter("id", to.getId());
+        return new HashSet<>(query.getResultList());
+
+    }
+
 }

@@ -2,13 +2,16 @@ package com.ivolodin.service;
 
 import com.ivolodin.dao.StationConnectDao;
 import com.ivolodin.dao.StationDao;
+import com.ivolodin.dao.TrainEdgeDao;
 import com.ivolodin.entities.Station;
 import com.ivolodin.entities.StationConnect;
+import com.ivolodin.entities.Train;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -19,6 +22,9 @@ public class StationService {
 
     @Autowired
     private final StationConnectDao stationConnectDao;
+
+    @Autowired
+    private final TrainEdgeDao trainEdgeDao;
 
     @Autowired
     private final StationGraph stationGraph;
@@ -63,5 +69,13 @@ public class StationService {
 
     public StationConnect getEdge(Station station1, Station station2) {
         return stationConnectDao.getConnect(station1, station2);
+    }
+
+    public Set<Train> getTrainsPassingFromStation(Station fr) {
+        return trainEdgeDao.getTrainsPassingFromThis(fr);
+    }
+
+    public Set<Train> getTrainsPassingToStation(Station to) {
+        return trainEdgeDao.getTrainsPassingToThis(to);
     }
 }

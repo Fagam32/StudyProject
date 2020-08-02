@@ -50,6 +50,9 @@
                     <a class="dropdown-item disabled" href="deleteEdge">Delete edge</a>
                 </div>
             </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/search">Search<span class="sr-only"></span></a>
+            </li>
         </ul>
         <%if (logged) {%>
         <div class="nav-item dropdown">
@@ -59,10 +62,12 @@
                 Profile
             </a>
             <div class="dropdown-menu" aria-labelledby="profileDropdown">
+                <a class="dropdown-item" href="/myTickets">My tickets</a>
                 <a class="dropdown-item" href="/passengerInfo">Settings</a>
                 <a class="dropdown-item" href="/logout">Logout</a>
             </div>
-        </div><%} else {%>
+        </div>
+        <%} else {%>
         <a class="my-2 my-lg-0" href="/login">Login</a>
         <%}%>
     </div>

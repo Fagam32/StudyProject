@@ -12,7 +12,7 @@ public class EntityManagerInitializer {
     public static final EntityManagerFactory factory = Persistence.createEntityManagerFactory("PU");
 
     @Bean
-    public static EntityManager getEntityManager(){
+    public static EntityManager getEntityManager() {
         return factory.createEntityManager();
     }
 }

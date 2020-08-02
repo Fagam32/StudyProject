@@ -33,7 +33,7 @@ public class TrainEdge {
     @Column
     private LocalDateTime arrival;
 
-    public TrainEdge(Train train, StationConnect stationConnect, int seatsLeft){
+    public TrainEdge(Train train, StationConnect stationConnect, int seatsLeft) {
         this.train = train;
         this.stationConnect = stationConnect;
         this.seatsLeft = seatsLeft;
