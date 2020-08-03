@@ -11,13 +11,8 @@ import java.util.List;
 @Repository
 public class TrainDaoImpl implements TrainDao {
 
-
-    private final EntityManager entityManager;
-
     @Autowired
-    public TrainDaoImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    private EntityManager entityManager;
 
     @Override
     public Train getById(int id) {
@@ -32,6 +27,7 @@ public class TrainDaoImpl implements TrainDao {
     }
 
     @Override
+
     public void delete(Train train) {
         entityManager.getTransaction().begin();
         entityManager.remove(train);
@@ -40,9 +36,7 @@ public class TrainDaoImpl implements TrainDao {
 
     @Override
     public void addTrain(Train train) {
-        entityManager.getTransaction().begin();
         entityManager.persist(train);
-        entityManager.getTransaction().commit();
     }
 
     @Override

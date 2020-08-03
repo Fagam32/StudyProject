@@ -13,12 +13,8 @@ import java.util.List;
 @Repository
 public class StationDaoImpl implements StationDao {
 
-    private final EntityManager entityManager;
-
     @Autowired
-    public StationDaoImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    private EntityManager entityManager;
 
     @Override
     public Station getById(int id) {

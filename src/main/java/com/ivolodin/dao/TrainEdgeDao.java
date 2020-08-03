@@ -23,4 +23,5 @@ public interface TrainEdgeDao {
 
     Set<Train> getTrainsPassingToThis(Station to);
 
+    List<TrainEdge> getTrainPath(Train train);
 }

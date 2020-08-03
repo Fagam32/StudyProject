@@ -1,6 +1,7 @@
 package com.ivolodin.dao;
 
 import com.ivolodin.entities.Station;
+import com.ivolodin.entities.Train;
 import com.ivolodin.entities.TrainEdge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -13,12 +14,8 @@ import java.util.List;
 @Repository
 public class TrainEdgeDaoImpl implements TrainEdgeDao {
 
-    private final EntityManager entityManager;
-
     @Autowired
-    public TrainEdgeDaoImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    private EntityManager entityManager;
 
     @Override
     public TrainEdge getById(int id) {
@@ -55,7 +52,7 @@ public class TrainEdgeDaoImpl implements TrainEdgeDao {
     @Override
     public HashSet getTrainsPassingFromThis(Station fr) {
         Query query = entityManager.createQuery
-                ("select train from Train train, TrainEdge edge where edge.stationConnect.from.id = :id");
+                ("select train from TrainEdge edge, Train train where (edge.stationConnect.from.id = :id)");
         query.setParameter("id", fr.getId());
         return new HashSet<>(query.getResultList());
     }
@@ -63,10 +60,18 @@ public class TrainEdgeDaoImpl implements TrainEdgeDao {
     @Override
     public HashSet getTrainsPassingToThis(Station to) {
         Query query = entityManager.createQuery
-                ("select train from Train train, TrainEdge edge where edge.stationConnect.to.id = :id");
+                ("select train from TrainEdge edge, Train train where (edge.stationConnect.to.id = :id)");
         query.setParameter("id", to.getId());
+
         return new HashSet<>(query.getResultList());
 
+    }
+
+    @Override
+    public List getTrainPath(Train train) {
+        Query query = entityManager.createQuery("select edge from TrainEdge edge where edge.train = :train order by edge.id");
+        query.setParameter("train", train);
+        return query.getResultList();
     }
 
 }

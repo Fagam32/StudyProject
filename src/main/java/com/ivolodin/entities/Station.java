@@ -2,11 +2,13 @@ package com.ivolodin.entities;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
 
+@NoArgsConstructor
 @EqualsAndHashCode
 @Entity
 @Getter
@@ -19,12 +21,6 @@ public class Station {
 
     @Column(nullable = false)
     private String name;
-
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Train> trainList;
-
-    public Station() {
-    }
 
     public Station(String stationName) {
         this.name = stationName;

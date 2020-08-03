@@ -18,18 +18,13 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="index">Home<span class="sr-only"></span></a>
+                <a class="nav-link" href="/index">Home<span class="sr-only"></span></a>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="trainDropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    Train
-                </a>
-                <div class="dropdown-menu" aria-labelledby="trainDropdown">
-                    <a class="dropdown-item" href="addTrain">Add new train</a>
-                    <a class="dropdown-item" href="deleteTrain">Delete train</a>
-                </div>
+            <%if (logged) {%>
+            <li class="nav-item active">
+                <a class="nav-link" href="/trains">Trains<span class="sr-only"></span></a>
             </li>
+            <%}%>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="stationDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">

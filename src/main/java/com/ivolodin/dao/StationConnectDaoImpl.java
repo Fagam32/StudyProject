@@ -14,12 +14,8 @@ import java.util.List;
 @Repository
 public class StationConnectDaoImpl implements StationConnectDao {
 
-    private final EntityManager entityManager;
-
     @Autowired
-    public StationConnectDaoImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    private EntityManager entityManager;
 
     @Override
     public StationConnect getById(int id) {

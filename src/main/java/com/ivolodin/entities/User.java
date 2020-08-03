@@ -37,7 +37,7 @@ public class User {
     @Column
     private LocalDate birthDate;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Set<Ticket> tickets;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)

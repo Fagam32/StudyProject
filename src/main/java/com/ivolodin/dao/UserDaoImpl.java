@@ -11,12 +11,11 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Repository
 public class UserDaoImpl implements UserDao {
 
     @Autowired
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
     public User getById(int id) {

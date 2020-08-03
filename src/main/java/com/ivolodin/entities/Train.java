@@ -3,12 +3,14 @@ package com.ivolodin.entities;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+@ToString
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,7 +38,7 @@ public class Train {
     @Column(name = "arrival")
     private LocalDateTime arrival;
 
-    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "train")
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "train", cascade = CascadeType.ALL)
     private Set<Ticket> tickets;
 
     @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "train")
@@ -49,15 +51,4 @@ public class Train {
         this.departure = departure;
     }
 
-    @Override
-    public String toString() {
-        return "Train{" +
-                "id=" + id +
-                ", seatsNumber=" + seatsNumber +
-                ", from=" + fromStation +
-                ", to=" + toStation +
-                ", departure=" + departure +
-                ", arrival=" + arrival +
-                '}';
-    }
 }

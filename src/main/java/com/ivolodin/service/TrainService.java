@@ -89,6 +89,7 @@ public class TrainService {
     }
 
     public List<Train> searchTrainInDate(Station fr, Station to, LocalDate trainDate) {
+        //TODO: find bug here. These methods return value is not always right.
         Set<Train> trainsPassingFromStation = stationService.getTrainsPassingFromStation(fr);
         Set<Train> trainsPassingToStation = stationService.getTrainsPassingToStation(to);
 
@@ -101,8 +102,7 @@ public class TrainService {
         List<Train> resultList = new ArrayList<>();
         //find trains which departure to the FROM station happens on the same date
         for (Train train : trainsPassingFromStation) {
-            List<TrainEdge> path = train.getPath();
-
+            List<TrainEdge> path = trainEdgeDao.getTrainPath(train);
             Train trainToAdd = new Train();
             trainToAdd.setId(train.getId());
 
@@ -131,7 +131,7 @@ public class TrainService {
                     trainToAdd.setSeatsNumber(seatsLeft);
                     if (trainToAdd.getDeparture() == null)
                         trainToAdd.setDeparture(train.getDeparture());
-                    if (seatsLeft > 0)
+                    if (seatsLeft > 0 && trainToAdd.getArrival() != null)
                         resultList.add(trainToAdd);
                 }
             }
