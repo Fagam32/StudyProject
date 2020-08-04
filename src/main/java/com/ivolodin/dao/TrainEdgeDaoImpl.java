@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -52,19 +53,21 @@ public class TrainEdgeDaoImpl implements TrainEdgeDao {
     @Override
     public HashSet getTrainsPassingFromThis(Station fr) {
         Query query = entityManager.createQuery
-                ("select train from TrainEdge edge, Train train where (edge.stationConnect.from.id = :id)");
-        query.setParameter("id", fr.getId());
+                ("select train from TrainEdge edge, Train train" +
+                        " where edge.stationConnect.from = :station" +
+                        " and edge.train = train");
+        query.setParameter("station", fr);
         return new HashSet<>(query.getResultList());
     }
 
     @Override
     public HashSet getTrainsPassingToThis(Station to) {
         Query query = entityManager.createQuery
-                ("select train from TrainEdge edge, Train train where (edge.stationConnect.to.id = :id)");
-        query.setParameter("id", to.getId());
-
-        return new HashSet<>(query.getResultList());
-
+                ("select train from TrainEdge edge, Train train " +
+                        "where edge.stationConnect.to = :station " +
+                        "and edge.train = train");
+        query.setParameter("station", to);
+        return new HashSet(query.getResultList());
     }
 
     @Override
@@ -72,6 +75,25 @@ public class TrainEdgeDaoImpl implements TrainEdgeDao {
         Query query = entityManager.createQuery("select edge from TrainEdge edge where edge.train = :train order by edge.id");
         query.setParameter("train", train);
         return query.getResultList();
+    }
+
+    @Override
+    public List<Train> getTrainsPassingThroughThis(Station station) {
+        List trains = entityManager.createQuery("select train from Train train, TrainEdge edge" +
+                " where edge.stationConnect.from = :station or edge.stationConnect.to = :station")
+                .setParameter("station", station)
+                .getResultList();
+        trains = new ArrayList<>(new HashSet<Train>(trains));
+        return trains;
+    }
+
+    @Override
+    public TrainEdge getEdgeByToStationAndTrain(Train train, Station station) {
+        Query query = entityManager.createQuery("select edge from TrainEdge edge " +
+                "where edge.train = :train and edge.stationConnect.to = :station")
+                .setParameter("train", train)
+                .setParameter("station", station);
+        return (TrainEdge) query.getSingleResult();
     }
 
 }

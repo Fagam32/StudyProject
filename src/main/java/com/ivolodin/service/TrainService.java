@@ -1,5 +1,6 @@
 package com.ivolodin.service;
 
+import com.ivolodin.dao.StationConnectDao;
 import com.ivolodin.dao.TrainDao;
 import com.ivolodin.dao.TrainEdgeDao;
 import com.ivolodin.entities.Station;
@@ -7,6 +8,7 @@ import com.ivolodin.entities.StationConnect;
 import com.ivolodin.entities.Train;
 import com.ivolodin.entities.TrainEdge;
 import com.ivolodin.exceptions.TrainException;
+import com.ivolodin.model.SearchForm;
 import com.ivolodin.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ public class TrainService {
     private final TrainEdgeDao trainEdgeDao;
     @Autowired
     private final StationService stationService;
+    @Autowired
+    private final StationConnectDao stationConnectDao;
 
     public void makeNewTrain(String frStat, String toStat, String departure, int seats) {
         Station frStation = stationService.getStationByName(frStat);
@@ -89,7 +93,7 @@ public class TrainService {
     }
 
     public List<Train> searchTrainInDate(Station fr, Station to, LocalDate trainDate) {
-        //TODO: find bug here. These methods return value is not always right.
+
         Set<Train> trainsPassingFromStation = stationService.getTrainsPassingFromStation(fr);
         Set<Train> trainsPassingToStation = stationService.getTrainsPassingToStation(to);
 
@@ -116,6 +120,7 @@ public class TrainService {
                     trainToAdd.setFromStation(fr);
                     trainToAdd.setToStation(to);
                     seatsLeft = Math.min(seatsLeft, edge.getSeatsLeft());
+
                     if (i != 0)
                         trainToAdd.setDeparture(path.get(i - 1).getArrival());
 
@@ -138,7 +143,6 @@ public class TrainService {
         }
 
         sortTrainListByDeparture(resultList);
-
         return resultList;
     }
 
@@ -153,8 +157,8 @@ public class TrainService {
         resultList.sort(trainComparator);
     }
 
-    public void updateSeatsOnPath(Train train, Station frSt, Station toSt) throws TrainException {
-        List<TrainEdge> path = train.getPath();
+    public void updateSeatsOnPath(Train train, Station frSt, Station toSt, Integer value) throws TrainException {
+        List<TrainEdge> path = trainEdgeDao.getTrainPath(train);
         int start = -1;
         int end = -1;
         for (int i = 0; i < path.size(); i++) {
@@ -168,23 +172,26 @@ public class TrainService {
 
         for (int i = start; i <= end; i++) {
             TrainEdge edge = path.get(i);
-            edge.setSeatsLeft(edge.getSeatsLeft() - 1);
+            edge.setSeatsLeft(edge.getSeatsLeft() + value);
         }
         for (TrainEdge edge : path)
             trainEdgeDao.update(edge);
     }
 
     public LocalDateTime getDepartureTimeOnStation(Train train, Station frSt) {
-        List<TrainEdge> path = train.getPath();
+        List<TrainEdge> path = trainEdgeDao.getTrainPath(train);
+        if (train.getFromStation().equals(frSt))
+            return train.getDeparture();
+
         for (TrainEdge edge : path) {
-            if (edge.getStationConnect().getFrom().equals(frSt))
+            if (edge.getStationConnect().getTo().equals(frSt))
                 return edge.getArrival();
         }
         return null;
     }
 
     public LocalDateTime getArrivalTimeOnStation(Train train, Station toSt) {
-        List<TrainEdge> path = train.getPath();
+        List<TrainEdge> path = trainEdgeDao.getTrainPath(train);
         for (TrainEdge edge : path) {
             if (edge.getStationConnect().getTo().equals(toSt))
                 return edge.getArrival();
@@ -192,5 +199,45 @@ public class TrainService {
         return null;
 
 
+    }
+
+    public List<Train> searchTrainInDate(SearchForm searchForm) {
+        Station frSt = stationService.getStationByName(searchForm.getStationFrom());
+        Station toSt = stationService.getStationByName(searchForm.getStationTo());
+        if (frSt != null && toSt != null)
+            return searchTrainInDate(frSt, toSt, searchForm.getDate());
+        else return null;
+    }
+
+    public List<Train> getTrainsOnStation(String stationName) {
+        Station station = stationService.getStationByName(stationName);
+        Set<Train> trains = trainEdgeDao.getTrainsPassingFromThis(station);
+        Set<Train> trainsTo = trainEdgeDao.getTrainsPassingToThis(station);
+
+        trains.addAll(trainsTo);
+
+        List<Train> result = new ArrayList<>(trains.size());
+
+        for (Train train : trains) {
+            Train trainToAdd = new Train();
+            trainToAdd.setId(train.getId());
+
+            //if train's arrival station is current station
+            if (train.getToStation().equals(station))
+                trainToAdd.setDeparture(train.getArrival());
+
+                //if train's departure station is current station
+            else if (train.getFromStation().equals(station)) {
+                trainToAdd.setDeparture(train.getDeparture());
+                trainToAdd.setToStation(train.getToStation());
+            } else {
+                TrainEdge edge = trainEdgeDao.getEdgeByToStationAndTrain(train, station);
+                trainToAdd.setToStation(train.getToStation());
+                trainToAdd.setDeparture(edge.getArrival());
+            }
+            result.add(trainToAdd);
+        }
+        sortTrainListByDeparture(result);
+        return result;
     }
 }

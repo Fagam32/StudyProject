@@ -6,10 +6,10 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <title>Add Station</title>
+    <title>Index</title>
 </head>
-<body>
 <%@include file="parts/topNavigationMenu.jsp" %>
-<%@include file="parts/bottomNavigationMenu.jsp" %>
+<body>
 </body>
+<%@include file="parts/bottomNavigationMenu.jsp" %>
 </html>

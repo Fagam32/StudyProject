@@ -1,6 +1,7 @@
-<%@ page import="com.ivolodin.entities.Train" %>
-<%@ page import="java.util.List" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +9,7 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <title>Add Station</title>
+    <title>Search</title>
 </head>
 <body>
 <%@include file="parts/topNavigationMenu.jsp" %>
@@ -36,28 +37,24 @@
                 <th scope="col">Action</th>
             </tr>
             </thead>
-            <tbody>
-            <%
-                List<Train> trainList = (List<Train>) request.getAttribute("trains");
-                if (trainList != null && !trainList.isEmpty()) {
-                    for (Train t : trainList) {
-                        out.println("<tr>"
-                                + "<th scope=\"row\">" + t.getId() + "</th> "
-                                + "<td>" + t.getFromStation().getName() + "</td>"
-                                + "<td>" + t.getToStation().getName() + "</td>"
-                                + "<td>" + t.getDeparture() + "</td>"
-                                + "<td>" + t.getArrival() + "</td>"
-                                + "<td>" + t.getSeatsNumber() + "</td>"
-                                + "<td>" + "<a href=\"/buyTicket?trainId=" + t.getId()
-                                + "&fromStation=" + t.getFromStation().getName()
-                                + "&toStation=" + t.getToStation().getName()
-                                + "\"><input type=\"button\" class=\"btn btn-primary\" value=\"Buy\"></a>" + "</td>"
-                                + "</tr>");
-                    }
-                } else if (trainList != null) {
-                    out.print("No trains found");
-                }
-            %>
+            <tbody><c:forEach items="${trains}" var="train">
+                <tr>
+                    <td>${train.id}</td>
+                    <td>${train.fromStation.name}</td>
+                    <td>${train.toStation.name}</td>
+                    <td>${DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy").format(train.departure)}</td>
+                    <td>${DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy").format(train.arrival)}</td>
+                    <td>${train.seatsNumber}</td>
+                    <td>
+                        <form method="post" action="/buyTicket">
+                            <input type="hidden" name="trainId" value="${train.id}">
+                            <input type="hidden" name="fromStation" value="${train.fromStation.name}">
+                            <input type="hidden" name="toStation" value="${train.toStation.name}">
+                            <button class="btn btn-primary" type="submit">Buy</button>
+                        </form>
+                    </td>
+                </tr>
+            </c:forEach>
             </tbody>
         </table>
     </div>

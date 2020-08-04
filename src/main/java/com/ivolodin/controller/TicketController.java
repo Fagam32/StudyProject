@@ -5,6 +5,7 @@ import com.ivolodin.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,7 +19,7 @@ public class TicketController {
     @Autowired
     private TicketService ticketService;
 
-    @GetMapping("/buyTicket")
+    @PostMapping(value = "/buyTicket", params = {"trainId", "fromStation", "toStation"})
     public ModelAndView buyTicket(Principal principal,
                                   @RequestParam Integer trainId,
                                   @RequestParam String fromStation,
@@ -28,6 +29,12 @@ public class TicketController {
         String message = ticketService.buyTicket(principal.getName(), trainId, fromStation, toStation);
         modelAndView.addObject("message", message);
         return modelAndView;
+    }
+
+    @PostMapping(value = "/myTickets", params = {"ticketId"})
+    public String cancelTicket(@RequestParam Integer ticketId){
+        ticketService.cancelTicket(ticketId);
+        return "redirect:/myTickets";
     }
 
     @GetMapping("/myTickets")

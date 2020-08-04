@@ -60,7 +60,7 @@ public class TicketService {
             return "Something is wrong. Try again";
         }
 
-        trainService.updateSeatsOnPath(train, frSt, toSt);
+        trainService.updateSeatsOnPath(train, frSt, toSt, -1);
         Ticket ticket = new Ticket();
         ticket.setUser(user);
         ticket.setTrain(train);
@@ -76,5 +76,11 @@ public class TicketService {
     public List<Ticket> getUserTickets(String userName) {
         User user = userDao.getByUsername(userName);
         return ticketDao.getTicketsFromUser(user);
+    }
+
+    public void cancelTicket(Integer ticketId) {
+        Ticket ticket = ticketDao.getById(ticketId);
+        trainService.updateSeatsOnPath(ticket.getTrain(), ticket.getFrStation(), ticket.getToStation(), 1);
+        ticketDao.delete(ticket);
     }
 }

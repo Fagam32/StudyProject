@@ -13,7 +13,7 @@
 <div class="container">
     <div class="row justify-content-center align-items-center" style="height:100vh">
         <div class="col-3 card card-body">
-            <form method="post" autocomplete="off">
+            <form method="post">
                 <div class="form-group">
                     <input type="text" class="form-control" name="username" placeholder="Login">
                 </div>

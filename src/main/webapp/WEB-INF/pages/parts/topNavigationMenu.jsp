@@ -21,30 +21,21 @@
                 <a class="nav-link" href="/index">Home<span class="sr-only"></span></a>
             </li>
             <%if (logged) {%>
+            <sec:authorize access="hasAuthority('ADMIN')">
             <li class="nav-item active">
                 <a class="nav-link" href="/trains">Trains<span class="sr-only"></span></a>
             </li>
+            </sec:authorize>
+
+            <li class="nav-item active">
+                <a class="nav-link" href="/stations">Stations<span class="sr-only"></span></a>
+            </li>
+            <sec:authorize access="hasAuthority('ADMIN')">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/edges">Edges<span class="sr-only"></span></a>
+                </li>
+            </sec:authorize>
             <%}%>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="stationDropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    Station
-                </a>
-                <div class="dropdown-menu" aria-labelledby="stationDropdown">
-                    <a class="dropdown-item" href="addStation">Add new station</a>
-                    <a class="dropdown-item disabled" href="deleteStation">Delete station</a>
-                </div>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="edgeDropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    Edge
-                </a>
-                <div class="dropdown-menu" aria-labelledby="edgeDropdown">
-                    <a class="dropdown-item" href="addEdge">Add new edge</a>
-                    <a class="dropdown-item disabled" href="deleteEdge">Delete edge</a>
-                </div>
-            </li>
             <li class="nav-item active">
                 <a class="nav-link" href="/search">Search<span class="sr-only"></span></a>
             </li>

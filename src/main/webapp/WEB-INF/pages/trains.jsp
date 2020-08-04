@@ -1,27 +1,29 @@
-<%@ page import="com.ivolodin.entities.Train" %>
-<%@ page import="java.util.List" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <title>Add Train</title>
+    <title>Trains</title>
 </head>
 <%@include file="parts/topNavigationMenu.jsp" %>
 <body>
 <div class="container">
     <div class="form-group">
-        <form class="form-inline justify-content-md-center pt-5" method="post">
-            <label><input type="text" class="form-control ml-3" name="fromStation" placeholder="From"></label>
-            <label><input type="text" class="form-control ml-3" name="toStation" placeholder="To"></label>
-            <label><input type="datetime-local" class="form-control ml-3" name="date"></label>
-            <label><input type="number" class="form-control ml-3" name="seats" placeholder="Seats"></label>
-            <label>
-                <button type="submit" class="btn btn-primary ml-3">Add</button>
-            </label>
-        </form>
+        <sec:authorize access="hasAuthority('ADMIN')">
+            <form class="form-inline justify-content-md-center pt-5" method="post">
+                <label><input type="text" class="form-control ml-3" name="fromStation" placeholder="From"></label>
+                <label><input type="text" class="form-control ml-3" name="toStation" placeholder="To"></label>
+                <label><input type="datetime-local" class="form-control ml-3" name="date"></label>
+                <label><input type="number" class="form-control ml-3" name="seats" placeholder="Seats"></label>
+                <label>
+                    <button type="submit" class="btn btn-primary ml-3">Add</button>
+                </label>
+            </form>
+        </sec:authorize>
     </div>
     <table class="table">
         <thead>
@@ -36,31 +38,26 @@
         </tr>
         </thead>
         <tbody>
-        <%
-            List<Train> edgeList = (List<Train>) request.getAttribute("trains");
-            if (edgeList != null) {
-                for (Train t : edgeList) {
-                    out.println("<tr>"
-                            + "<form method=\"post\">\n"
-                            + "<input type=\"hidden\" name=\"trainId\" value =\"" + t.getId() + "\">"
-                            + "<th scope=\"row\">" + t.getId() + "</th> "
-                            + "<td>" + t.getFromStation().getName() + "</td>"
-                            + "<td>" + t.getToStation().getName() + "</td>"
-                            + "<td>" + t.getDeparture() + "</td>"
-                            + "<td>" + t.getArrival() + "</td>"
-                            + "<td>" + t.getSeatsNumber() + "</td>"
-                            + "<td>" + "<button type=\"submit\" class=\"btn btn-danger\" >Delete</button>" + "</td>"
-                            + "</form>"
-                            + "</tr>");
-                }
-            } else {
-                out.print("No trains here");
-            }
-        %>
+        <c:forEach items="${trains}" var="train">
+            <tr>
+                <td>${train.id}</td>
+                <td>${train.fromStation.name}</td>
+                <td>${train.toStation.name}</td>
+                <td>${DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy").format(train.departure)}</td>
+                <td>${DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy").format(train.arrival)}</td>
+                <td>${train.seatsNumber}</td>
+                <sec:authorize access="hasAuthority('ADMIN')">
+                    <td>
+                        <form method="post">
+                            <input type="hidden" name="trainId" value="${train.id}">
+                            <button class="btn btn-danger" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </sec:authorize>
+            </tr>
+        </c:forEach>
         </tbody>
     </table>
-
-    </form>
 </div>
 <%@include file="parts/bottomNavigationMenu.jsp" %>
 </body>
