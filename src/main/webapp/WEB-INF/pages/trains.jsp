@@ -46,14 +46,18 @@
                 <td>${DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy").format(train.departure)}</td>
                 <td>${DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy").format(train.arrival)}</td>
                 <td>${train.seatsNumber}</td>
-                <sec:authorize access="hasAuthority('ADMIN')">
-                    <td>
-                        <form method="post">
-                            <input type="hidden" name="trainId" value="${train.id}">
-                            <button class="btn btn-danger" type="submit">Delete</button>
+                <td>
+                    <div class="form-inline">
+                        <form method="get" action="/trains/${train.id}">
+                            <button class="btn btn-info ml-2" type="submit">Show details</button>
                         </form>
-                    </td>
-                </sec:authorize>
+                        <sec:authorize access="hasAuthority('ADMIN')">
+                            <form method="post">
+                                <input type="hidden" name="trainId" value="${train.id}">
+                                <button class="btn btn-danger ml-2" type="submit">Delete</button>
+                            </form>
+                        </sec:authorize>
+                    </div></td>
             </tr>
         </c:forEach>
         </tbody>

@@ -96,4 +96,8 @@ public class TicketService {
         trainService.updateSeatsOnPath(ticket.getTrain(), ticket.getFrStation(), ticket.getToStation(), 1);
         ticketDao.delete(ticket);
     }
+
+    public Set<Ticket> getTicketsOnTrain(Train train) {
+        return ticketDao.getAllForTrain(train);
+    }
 }

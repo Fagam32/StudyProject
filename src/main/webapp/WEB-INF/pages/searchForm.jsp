@@ -46,13 +46,17 @@
                     <td>${DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy").format(train.arrival)}</td>
                     <td>${train.seatsNumber}</td>
                     <td>
-                        <form method="post" action="/buyTicket">
-                            <input type="hidden" name="trainId" value="${train.id}">
-                            <input type="hidden" name="fromStation" value="${train.fromStation.name}">
-                            <input type="hidden" name="toStation" value="${train.toStation.name}">
-                            <button class="btn btn-primary" type="submit">Buy</button>
-                        </form>
-                    </td>
+                        <div class="form-inline">
+                            <form method="post" action="/buyTicket">
+                                <input type="hidden" name="trainId" value="${train.id}">
+                                <input type="hidden" name="fromStation" value="${train.fromStation.name}">
+                                <input type="hidden" name="toStation" value="${train.toStation.name}">
+                                <button class="btn btn-primary ml-2" type="submit">Buy</button>
+                            </form>
+                            <form method="get" action="/trains/${train.id}">
+                                <button class="btn btn-info ml-2" type="submit">Show details</button>
+                            </form>
+                        </div></td>
                 </tr>
             </c:forEach>
             </tbody>

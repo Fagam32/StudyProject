@@ -244,4 +244,12 @@ public class TrainService {
         sortTrainListByDeparture(result);
         return result;
     }
+
+    public Train getTrainById(Integer trainId) {
+        return trainDao.getById(trainId);
+    }
+
+    public List<TrainEdge> getTrainPath(Train train) {
+        return trainEdgeDao.getTrainPath(train);
+    }
 }
