@@ -100,6 +100,7 @@ public class StationService {
 
     public void deleteEdge(Integer edgeId) {
         StationConnect sc = getEdgeById(edgeId);
+
         stationGraph.deleteEdge(sc.getFrom(), sc.getTo());
         stationConnectDao.delete(sc);
     }

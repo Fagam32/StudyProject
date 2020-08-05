@@ -10,6 +10,12 @@
 </head>
 <%@include file="parts/topNavigationMenu.jsp" %>
 <body>
+
+<div class="d-flex justify-content-md-center">
+    <img src="https://avatars.mds.yandex.net/get-pdb/1925624/d0eb305d-fa02-42fe-9598-e40138534652/s375"
+         alt=""
+    >
+</div>
 </body>
 <%@include file="parts/bottomNavigationMenu.jsp" %>
 </html>

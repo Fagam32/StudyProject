@@ -48,9 +48,20 @@ public class TicketService {
 
         Set<Ticket> tickets = ticketDao.getAllForTrain(train);
 
+        if (user.getName() == null || user.getSurname() == null || user.getBirthDate() == null)
+            return "You must fill Name, Surname and birthday in profile settings";
+
         for (Ticket ticket : tickets) {
-            if (ticket.getUser().equals(user))
+            User ticketUser = ticket.getUser();
+
+            if (ticketUser.equals(user)) {
                 return "You have already bought ticket for this train";
+            }
+
+            if (ticketUser.getName().equals(user.getName())
+                    && ticketUser.getSurname().equals(user.getSurname())
+                    && ticketUser.getBirthDate().equals(user.getBirthDate()))
+                return "User with such data(Name, Surname, Birthday) is already registered for this train";
         }
 
         LocalDateTime departure = trainService.getDepartureTimeOnStation(train, frSt);
@@ -60,6 +71,8 @@ public class TicketService {
             return "Something is wrong. Try again";
         }
 
+        if (departure.isBefore(LocalDateTime.now().minusMinutes(10)))
+            return "You can't buy ticket for train departing in 10 or less minutes";
         trainService.updateSeatsOnPath(train, frSt, toSt, -1);
         Ticket ticket = new Ticket();
         ticket.setUser(user);

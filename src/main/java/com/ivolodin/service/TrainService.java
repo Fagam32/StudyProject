@@ -50,6 +50,9 @@ public class TrainService {
             return;
 
         LocalDateTime departureDate = Utils.createDateTimeFromString(departure);
+        if (departureDate.isBefore(LocalDateTime.now()))
+            return;
+
         Train train = new Train(seats, frStat, toStat, departureDate);
         trainDao.addTrain(train);
 
@@ -116,7 +119,8 @@ public class TrainService {
             for (int i = 0; i < path.size(); i++) {
                 TrainEdge edge = path.get(i);
                 if (edge.getStationConnect().getFrom().equals(fr)
-                        && edge.getArrival().isAfter(trainDate.atStartOfDay())) {
+                        && edge.getArrival().isAfter(trainDate.atStartOfDay())
+                        ) {
                     trainToAdd.setFromStation(fr);
                     trainToAdd.setToStation(to);
                     seatsLeft = Math.min(seatsLeft, edge.getSeatsLeft());

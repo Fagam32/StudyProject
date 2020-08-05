@@ -1,7 +1,6 @@
 package com.ivolodin.dao;
 
 import com.ivolodin.entities.User;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
