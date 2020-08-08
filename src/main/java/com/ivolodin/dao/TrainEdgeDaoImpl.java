@@ -1,6 +1,7 @@
 package com.ivolodin.dao;
 
 import com.ivolodin.entities.Station;
+import com.ivolodin.entities.StationConnect;
 import com.ivolodin.entities.Train;
 import com.ivolodin.entities.TrainEdge;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class TrainEdgeDaoImpl implements TrainEdgeDao {
@@ -94,6 +96,13 @@ public class TrainEdgeDaoImpl implements TrainEdgeDao {
                 .setParameter("train", train)
                 .setParameter("station", station);
         return (TrainEdge) query.getSingleResult();
+    }
+
+    @Override
+    public Set<Integer> getTrainIdsByStationConnect(StationConnect sc) {
+        return new HashSet<Integer>(entityManager.createQuery("select train.id from Train train, TrainEdge edge " +
+                "where edge.stationConnect = :sc", Integer.class)
+                .setParameter("sc", sc).getResultList());
     }
 
 }

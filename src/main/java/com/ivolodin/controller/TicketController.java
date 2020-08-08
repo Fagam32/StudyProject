@@ -20,15 +20,13 @@ public class TicketController {
     private TicketService ticketService;
 
     @PostMapping(value = "/buyTicket", params = {"trainId", "fromStation", "toStation"})
-    public ModelAndView buyTicket(Principal principal,
+    public String buyTicket(Principal principal,
                                   @RequestParam Integer trainId,
                                   @RequestParam String fromStation,
                                   @RequestParam String toStation) {
-        ModelAndView modelAndView = new ModelAndView("buyTicket");
 
-        String message = ticketService.buyTicket(principal.getName(), trainId, fromStation, toStation);
-        modelAndView.addObject("message", message);
-        return modelAndView;
+        ticketService.buyTicket(principal.getName(), trainId, fromStation, toStation);
+        return "redirect:/index";
     }
 
     @PostMapping(value = "/myTickets", params = {"ticketId"})

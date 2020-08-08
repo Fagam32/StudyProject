@@ -38,10 +38,10 @@ public class Train {
     @Column(name = "arrival")
     private LocalDateTime arrival;
 
-    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "train", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train")
     private Set<Ticket> tickets;
 
-    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "train")
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train")
     private List<TrainEdge> path;
 
     public Train(int seatsNumber, Station fromStation, Station toStation, LocalDateTime departure) {

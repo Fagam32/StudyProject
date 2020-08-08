@@ -33,7 +33,7 @@ public class StationService {
     public void addStation(String stationName) {
         Station check = stationDao.getByName(stationName);
         if (check != null)
-            return;
+            throw new IllegalArgumentException("Stations with such name is already exists");
 
         Station station = new Station(stationName);
         stationDao.addStation(station);
@@ -100,6 +100,16 @@ public class StationService {
 
     public void deleteEdge(Integer edgeId) {
         StationConnect sc = getEdgeById(edgeId);
+        Set<Integer> trainIds = trainEdgeDao.getTrainIdsByStationConnect(sc);
+        if (!trainIds.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (Integer i : trainIds)
+                sb.append("{").append(i).append("}");
+            throw new IllegalArgumentException(
+                    "Before deleting edge from {" + sc.getFrom().getName() + "} to {" + sc.getTo().getName() + "}"
+                            + " you should delete trains with ids: [" + sb.toString() + "]"
+            );
+        }
 
         stationGraph.deleteEdge(sc.getFrom(), sc.getTo());
         stationConnectDao.delete(sc);

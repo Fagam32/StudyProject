@@ -43,6 +43,7 @@ public class StationGraph {
 
     public List<Station> getPathList(Station from, Station to) {
         try {
+            //It throws NPE if there's no way between Stations. So we have to catch it
             return DijkstraShortestPath.findPathBetween(graph, from, to).getVertexList();
         } catch (NullPointerException e) {
             return null;

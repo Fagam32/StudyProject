@@ -1,6 +1,7 @@
 package com.ivolodin.dao;
 
 import com.ivolodin.entities.Station;
+import com.ivolodin.entities.StationConnect;
 import com.ivolodin.entities.Train;
 import com.ivolodin.entities.TrainEdge;
 
@@ -28,4 +29,6 @@ public interface TrainEdgeDao {
     List<Train> getTrainsPassingThroughThis(Station stationName);
 
     TrainEdge getEdgeByToStationAndTrain(Train train, Station station);
+
+    Set<Integer> getTrainIdsByStationConnect(StationConnect sc);
 }

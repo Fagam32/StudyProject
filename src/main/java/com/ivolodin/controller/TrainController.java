@@ -5,6 +5,7 @@ import com.ivolodin.entities.Train;
 import com.ivolodin.entities.TrainEdge;
 import com.ivolodin.service.TicketService;
 import com.ivolodin.service.TrainService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -32,13 +33,13 @@ public class TrainController {
     }
 
     @GetMapping("/{trainId}")
-    public ModelAndView showTrainPathAndTickets(@PathVariable Integer trainId){
+    public ModelAndView showTrainPathAndTickets(@PathVariable Integer trainId) throws NotFoundException {
         ModelAndView modelAndView = new ModelAndView("trainPathAndTickets");
         Train train = trainService.getTrainById(trainId);
-        if (train == null){
-            modelAndView.addObject("message", "Train not found");
-            return modelAndView;
+        if (train == null) {
+            throw new NotFoundException("No train with ID: {" + trainId + "} found ");
         }
+
         List<TrainEdge> path = trainService.getTrainPath(train);
         Set<Ticket> tickets = ticketService.getTicketsOnTrain(train);
         modelAndView.addObject("train", train);
@@ -46,6 +47,7 @@ public class TrainController {
         modelAndView.addObject("tickets", tickets);
         return modelAndView;
     }
+
     @PostMapping(params = "trainId")
     public String deleteTrain(@RequestParam(name = "trainId") Integer trainId) {
         trainService.deleteTrainById(trainId);

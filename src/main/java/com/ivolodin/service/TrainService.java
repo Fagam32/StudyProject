@@ -44,10 +44,10 @@ public class TrainService {
 
     public void makeNewTrain(Station frStat, Station toStat, String departure, int seats) {
         if (frStat == null || toStat == null)
-            return;
+            throw new IllegalArgumentException("There's no such stations");
         List<Station> pathList = graph.getPathList(frStat, toStat);
         if (pathList == null)
-            return;
+            throw new IllegalArgumentException("No path between {" + frStat.getName() + "} and {" + toStat.getName() + "}");
 
         LocalDateTime departureDate = Utils.createDateTimeFromString(departure);
         if (departureDate.isBefore(LocalDateTime.now()))
@@ -120,7 +120,7 @@ public class TrainService {
                 TrainEdge edge = path.get(i);
                 if (edge.getStationConnect().getFrom().equals(fr)
                         && edge.getArrival().isAfter(trainDate.atStartOfDay())
-                        ) {
+                ) {
                     trainToAdd.setFromStation(fr);
                     trainToAdd.setToStation(to);
                     seatsLeft = Math.min(seatsLeft, edge.getSeatsLeft());
@@ -201,8 +201,6 @@ public class TrainService {
                 return edge.getArrival();
         }
         return null;
-
-
     }
 
     public List<Train> searchTrainInDate(SearchForm searchForm) {
@@ -210,7 +208,8 @@ public class TrainService {
         Station toSt = stationService.getStationByName(searchForm.getStationTo());
         if (frSt != null && toSt != null)
             return searchTrainInDate(frSt, toSt, searchForm.getDate());
-        else return null;
+        else
+            throw new IllegalArgumentException("No stations with such name");
     }
 
     public List<Train> getTrainsOnStation(String stationName) {
