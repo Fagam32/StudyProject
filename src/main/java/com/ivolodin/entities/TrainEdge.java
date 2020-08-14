@@ -1,19 +1,13 @@
 package com.ivolodin.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Entity
-@Table(name = "trainPaths")
+@Table(name = "train_paths")
 public class TrainEdge {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,15 +21,16 @@ public class TrainEdge {
     @OneToOne
     private StationConnect stationConnect;
 
-    @Column(name = "seatsLeft")
+    @Column(name = "seats_left")
     private int seatsLeft;
 
-    @Column
+    @Column(name = "departure")
+    private LocalDateTime departure;
+
+    @Column(name = "standing")
+    private int standingMinutes;
+
+    @Column(name = "arrival")
     private LocalDateTime arrival;
 
-    public TrainEdge(Train train, StationConnect stationConnect, int seatsLeft) {
-        this.train = train;
-        this.stationConnect = stationConnect;
-        this.seatsLeft = seatsLeft;
-    }
 }

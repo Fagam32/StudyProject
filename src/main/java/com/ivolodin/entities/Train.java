@@ -1,35 +1,30 @@
 package com.ivolodin.entities;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-@ToString
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @Entity
 @Table(name = "trains")
 public class Train {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Integer id;
 
-    @Column(name = "seatsNumber", nullable = false)
+    @Column(name = "total_seats_number", nullable = false)
     private int seatsNumber;
 
     @OneToOne
-    @JoinColumn(name = "stationFrom", nullable = false)
+    @JoinColumn(name = "from_station", nullable = false)
     private Station fromStation;
 
     @OneToOne
-    @JoinColumn(name = "stationTo", nullable = false)
+    @JoinColumn(name = "to_station", nullable = false)
     private Station toStation;
 
     @Column(name = "departure")
@@ -43,12 +38,4 @@ public class Train {
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train")
     private List<TrainEdge> path;
-
-    public Train(int seatsNumber, Station fromStation, Station toStation, LocalDateTime departure) {
-        this.seatsNumber = seatsNumber;
-        this.fromStation = fromStation;
-        this.toStation = toStation;
-        this.departure = departure;
-    }
-
 }

@@ -1,17 +1,13 @@
 package com.ivolodin.entities;
 
-import lombok.*;
+
+import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
+@Data
 @Entity
 @Table(name = "users")
 public class User {
@@ -22,7 +18,7 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "userName")
+    @Column(name = "user_name")
     private String userName;
 
     @Column(name = "password")
@@ -44,6 +40,4 @@ public class User {
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(value = EnumType.STRING)
     private Set<Role> roles;
-
-
 }

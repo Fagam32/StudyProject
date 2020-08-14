@@ -1,15 +1,11 @@
 package com.ivolodin.entities;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @Entity
 @Table(name = "tickets")
 public class Ticket {
@@ -18,27 +14,28 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @JoinColumn(name = "trainId")
+    @JoinColumn(name = "train_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private Train train;
 
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     @ManyToOne
     private User user;
 
-    @JoinColumn(name = "fromStation")
+    @JoinColumn(name = "from_station")
     @ManyToOne
     private Station frStation;
 
-    @JoinColumn(name = "toStation")
+    @JoinColumn(name = "to_station")
     @ManyToOne
     private Station toStation;
 
-    @Column
+    @Column(name = "departure")
     private LocalDateTime departure;
 
-    @Column
+    @Column(name = "arrival")
     private LocalDateTime arrival;
 
-
+    @Column(name = "purchase_date")
+    private LocalDateTime purchaseDate;
 }

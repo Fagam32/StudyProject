@@ -1,24 +1,19 @@
 package com.ivolodin.entities;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
-
 @NoArgsConstructor
-@EqualsAndHashCode
+@Data
 @Entity
-@Getter
-@Setter
 @Table(name = "stations")
 public class Station {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     public Station(String stationName) {
@@ -26,4 +21,3 @@ public class Station {
     }
 
 }
-
