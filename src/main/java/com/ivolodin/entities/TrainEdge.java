@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "trainPaths")
+@Table(name = "train_paths")
 public class TrainEdge {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,7 +27,7 @@ public class TrainEdge {
     @OneToOne
     private StationConnect stationConnect;
 
-    @Column(name = "seatsLeft")
+    @Column(name = "seats_left")
     private int seatsLeft;
 
     @Column

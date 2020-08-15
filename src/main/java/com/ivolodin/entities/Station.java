@@ -14,11 +14,12 @@ import javax.persistence.*;
 @Setter
 @Table(name = "stations")
 public class Station {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     public Station(String stationName) {
@@ -26,4 +27,5 @@ public class Station {
     }
 
 }
+
 

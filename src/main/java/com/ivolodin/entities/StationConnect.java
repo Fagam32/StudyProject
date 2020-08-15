@@ -10,7 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "stationConnects")
+@Table(name = "station_connects")
 public class StationConnect {
 
     @Id
@@ -18,14 +18,14 @@ public class StationConnect {
     private int id;
 
     @OneToOne
-    @JoinColumn(name = "fromStation")
+    @JoinColumn(name = "from_station")
     private Station from;
 
     @OneToOne
-    @JoinColumn(name = "toStation")
+    @JoinColumn(name = "to_station")
     private Station to;
 
-    @Column
+    @Column(name = "distance_in_minutes")
     private long distanceInMinutes;
 
     public StationConnect(Station from, Station to, long distance) {

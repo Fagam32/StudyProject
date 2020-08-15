@@ -21,15 +21,15 @@ public class Train {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column(name = "seatsNumber", nullable = false)
+    @Column(name = "seats_number", nullable = false)
     private int seatsNumber;
 
     @OneToOne
-    @JoinColumn(name = "stationFrom", nullable = false)
+    @JoinColumn(name = "to_station", nullable = false)
     private Station fromStation;
 
     @OneToOne
-    @JoinColumn(name = "stationTo", nullable = false)
+    @JoinColumn(name = "from_station", nullable = false)
     private Station toStation;
 
     @Column(name = "departure")

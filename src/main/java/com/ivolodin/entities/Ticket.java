@@ -18,26 +18,26 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @JoinColumn(name = "trainId")
+    @JoinColumn(name = "train")
     @ManyToOne(fetch = FetchType.EAGER)
     private Train train;
 
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user")
     @ManyToOne
     private User user;
 
-    @JoinColumn(name = "fromStation")
+    @JoinColumn(name = "from_station")
     @ManyToOne
     private Station frStation;
 
-    @JoinColumn(name = "toStation")
+    @JoinColumn(name = "to_station")
     @ManyToOne
     private Station toStation;
 
-    @Column
+    @Column(name = "departure")
     private LocalDateTime departure;
 
-    @Column
+    @Column(name = "arrival")
     private LocalDateTime arrival;
 
 

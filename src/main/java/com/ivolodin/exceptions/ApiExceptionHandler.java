@@ -9,6 +9,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     public ModelAndView handleExceptions(Exception e) {
+        e.printStackTrace();
         ModelAndView modelAndView = new ModelAndView("errorPage");
         modelAndView.addObject("message", e.getMessage());
         return modelAndView;

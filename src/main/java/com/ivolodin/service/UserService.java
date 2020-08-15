@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -49,6 +51,25 @@ public class UserService implements UserDetailsService {
     }
 
     public void save(User user) {
+        userDao.update(user);
+    }
+
+    public List<User> getAllUsers() {
+        return userDao.getAll();
+    }
+
+    public void updateUserRoles(Integer userId, boolean adminRole, boolean userRole) {
+        User user = userDao.getById(userId);
+        HashSet<Role> roles = new HashSet<>();
+
+        if (adminRole) roles.add(Role.ADMIN);
+
+        if (userRole) roles.add(Role.USER);
+
+        if (roles.isEmpty()) roles.add(Role.USER);
+
+        user.setRoles(roles);
+
         userDao.update(user);
     }
 }
