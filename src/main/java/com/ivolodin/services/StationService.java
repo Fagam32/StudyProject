@@ -14,11 +14,15 @@ public class StationService {
     @Autowired
     private StationRepository stationRepository;
 
+    @Autowired
+    private GraphService graphService;
+
     public List<Station> getAllStations() {
         return stationRepository.findAll();
     }
 
     public Station addStation(Station newSt) {
+        graphService.addVertex(newSt);
         return stationRepository.save(newSt);
     }
 
@@ -28,6 +32,12 @@ public class StationService {
     }
 
     public void remove(Station st){
+        graphService.deleteVertex(st);
+
         stationRepository.delete(st);
+    }
+
+    public List<Station> getStationsByName(String stationName) {
+        return stationRepository.getByNameContaining(stationName);
     }
 }

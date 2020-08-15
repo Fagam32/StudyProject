@@ -19,6 +19,11 @@ public class StationController {
         return stationService.getAllStations();
     }
 
+    @GetMapping
+    public List<Station> searchByName(@RequestParam("name") String stationName) {
+        return stationService.getStationsByName(stationName);
+    }
+
     @GetMapping("{id}")
     public Station getOneStation(@PathVariable("id") Station station) {
         return station;
