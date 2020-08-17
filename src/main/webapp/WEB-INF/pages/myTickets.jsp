@@ -12,6 +12,9 @@
 <body>
 <%@include file="parts/topNavigationMenu.jsp" %>
 <div class="container">
+    <div class="text-center">
+        <%if (request.getParameter("message") != null) out.print(request.getParameter("message"));%>
+    </div>
     <table class="table">
         <thead>
         <tr>

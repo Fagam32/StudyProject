@@ -1,6 +1,5 @@
 package com.ivolodin.service;
 
-import com.ivolodin.dao.StationConnectDao;
 import com.ivolodin.dao.TrainDao;
 import com.ivolodin.dao.TrainEdgeDao;
 import com.ivolodin.entities.Station;
@@ -33,8 +32,6 @@ public class TrainService {
     private final TrainEdgeDao trainEdgeDao;
     @Autowired
     private final StationService stationService;
-    @Autowired
-    private final StationConnectDao stationConnectDao;
 
     public void makeNewTrain(String frStat, String toStat, String departure, int seats) {
         Station frStation = stationService.getStationByName(frStat);
@@ -45,9 +42,8 @@ public class TrainService {
     public void makeNewTrain(Station frStat, Station toStat, String departure, int seats) {
         if (frStat == null || toStat == null)
             throw new IllegalArgumentException("There's no such stations");
+
         List<Station> pathList = graph.getPathList(frStat, toStat);
-        if (pathList == null)
-            throw new IllegalArgumentException("No path between {" + frStat.getName() + "} and {" + toStat.getName() + "}");
 
         LocalDateTime departureDate = Utils.createDateTimeFromString(departure);
         if (departureDate.isBefore(LocalDateTime.now()))
@@ -76,7 +72,6 @@ public class TrainService {
             }
 
             trainEdgeList.add(trainEdge);
-
         }
         train.setArrival(trainEdgeList.get(trainEdgeList.size() - 1).getArrival());
         trainDao.update(train);
@@ -97,12 +92,9 @@ public class TrainService {
 
     public List<Train> searchTrainInDate(Station fr, Station to, LocalDate trainDate) {
 
-        Set<Train> trainsPassingFromStation = stationService.getTrainsPassingFromStation(fr);
-        Set<Train> trainsPassingToStation = stationService.getTrainsPassingToStation(to);
+        Set<Train> trainsOnPath = stationService.getTrainsOnPath(fr, to);
 
-        trainsPassingFromStation.retainAll(trainsPassingToStation);
-
-        return chooseTrainsInCorrectDate(fr, to, trainDate, trainsPassingFromStation);
+        return chooseTrainsInCorrectDate(fr, to, trainDate, trainsOnPath);
     }
 
     private List<Train> chooseTrainsInCorrectDate(Station fr, Station to, LocalDate trainDate, Set<Train> trainsPassingFromStation) {

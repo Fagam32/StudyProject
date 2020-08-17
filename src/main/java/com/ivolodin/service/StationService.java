@@ -119,4 +119,7 @@ public class StationService {
         return stationConnectDao.getById(edgeId);
     }
 
+    public Set<Train> getTrainsOnPath(Station fr, Station to) {
+        return trainEdgeDao.getTrainsOnPath(fr, to);
+    }
 }

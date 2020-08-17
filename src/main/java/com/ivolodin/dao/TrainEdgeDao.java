@@ -31,4 +31,6 @@ public interface TrainEdgeDao {
     TrainEdge getEdgeByToStationAndTrain(Train train, Station station);
 
     Set<Integer> getTrainIdsByStationConnect(StationConnect sc);
+
+    Set<Train> getTrainsOnPath(Station fr, Station to);
 }

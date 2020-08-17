@@ -54,13 +54,8 @@ public class TicketService {
         for (Ticket ticket : tickets) {
             User ticketUser = ticket.getUser();
             if (ticketUser.equals(user)) {
-                throw new IllegalArgumentException("You must fill Name, Surname and birthday in profile settings");
-            }
-
-            if (ticketUser.getName().equals(user.getName())
-                    && ticketUser.getSurname().equals(user.getSurname())
-                    && ticketUser.getBirthDate().equals(user.getBirthDate()))
                 throw new IllegalArgumentException("User with such data(Name, Surname, Birthday) is already registered for this train");
+            }
         }
 
         LocalDateTime departure = trainService.getDepartureTimeOnStation(train, frSt);

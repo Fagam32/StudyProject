@@ -11,10 +11,9 @@
 </head>
 <body>
 <%@include file="parts/topNavigationMenu.jsp" %>
-<!--TODO: adequate front needed -->
 <div class="container justify-content-md-center">
     <div class="text-center">
-        <c:out value="${message}"/>
+
     </div>
 </div>
 <%@include file="parts/bottomNavigationMenu.jsp" %>

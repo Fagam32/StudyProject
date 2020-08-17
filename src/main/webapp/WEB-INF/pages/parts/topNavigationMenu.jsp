@@ -21,6 +21,11 @@
             <li class="nav-item active">
                 <a class="nav-link" href="/index">Home<span class="sr-only"></span></a>
             </li>
+
+            <li class="nav-item active">
+                <a class="nav-link" href="/stations">Stations<span class="sr-only"></span></a>
+            </li>
+
             <%if (logged) {%>
             <sec:authorize access="hasAuthority('ADMIN')">
             <li class="nav-item active">
@@ -28,9 +33,6 @@
             </li>
             </sec:authorize>
 
-            <li class="nav-item active">
-                <a class="nav-link" href="/stations">Stations<span class="sr-only"></span></a>
-            </li>
             <sec:authorize access="hasAuthority('ADMIN')">
                 <li class="nav-item active">
                     <a class="nav-link" href="/edges">Edges<span class="sr-only"></span></a>

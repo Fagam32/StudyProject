@@ -105,4 +105,13 @@ public class TrainEdgeDaoImpl implements TrainEdgeDao {
                 .setParameter("sc", sc).getResultList());
     }
 
+    @Override
+    public Set<Train> getTrainsOnPath(Station fr, Station to) {
+        Query query = entityManager.createQuery("select train from Train train, TrainEdge edge" +
+                " where (edge.stationConnect.from =:frStation or edge.stationConnect.to = :toStation) and edge.train = train", Train.class);
+        query.setParameter("frStation", fr);
+        query.setParameter("toStation", to);
+        return new HashSet<Train>(query.getResultList());
+    }
+
 }

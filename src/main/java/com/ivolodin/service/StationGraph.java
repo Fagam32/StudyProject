@@ -11,6 +11,7 @@ import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -42,12 +43,11 @@ public class StationGraph {
     }
 
     public List<Station> getPathList(Station from, Station to) {
-        try {
-            //It throws NPE if there's no way between Stations. So we have to catch it
-            return DijkstraShortestPath.findPathBetween(graph, from, to).getVertexList();
-        } catch (NullPointerException e) {
-            return null;
+        List<Station> vertexList = DijkstraShortestPath.findPathBetween(graph, from, to).getVertexList();
+        if (vertexList == null) {
+            return new ArrayList<>();
         }
+        return vertexList;
     }
 
     public void addEdge(Station fr, Station to, long dist) {
