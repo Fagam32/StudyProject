@@ -9,5 +9,5 @@ public interface StationRepository extends JpaRepository<Station, Integer> {
 
     Station findByName(String name);
 
-    List<Station> getByNameContaining(String stationName);
+    List<Station> findByNameContaining(String stationName);
 }

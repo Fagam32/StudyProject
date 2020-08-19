@@ -16,6 +16,9 @@ public class Train {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(name = "train_name")
+    private String trainName;
+
     @Column(name = "total_seats_number", nullable = false)
     private int seatsNumber;
 

@@ -1,45 +1,38 @@
 package com.ivolodin.controller;
 
-import com.ivolodin.entities.Station;
-import com.ivolodin.entities.StationConnect;
+import com.ivolodin.dto.StationConnectDto;
 import com.ivolodin.services.EdgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @CrossOrigin
-@RestController("edges")
+@RestController
+@RequestMapping("/edges")
 public class EdgeController {
 
     @Autowired
     private EdgeService edgeService;
 
     @GetMapping("/edges")
-    public List<StationConnect> getAllConnects() {
+    public List<StationConnectDto> getAllConnects() {
         return edgeService.getAll();
     }
 
-    @GetMapping("{id}")
-    public StationConnect getOneConnect(@PathVariable("id") StationConnect sc) {
-        return sc;
-    }
-
     @PostMapping
-    public StationConnect addNewConnect(@RequestBody Station fromStation,
-                                        @RequestBody Station toStation,
-                                        @RequestBody int distance) {
-        return edgeService.addNewEdge(fromStation, toStation, distance);
+    public StationConnectDto addNewConnect(@Valid StationConnectDto scDto) {
+        return edgeService.addNewEdge(scDto);
     }
 
-    @PutMapping("{id}")
-    public StationConnect editConnect(@PathVariable("id") StationConnect oldSc,
-                                      @RequestBody StationConnect newSc) {
-        return edgeService.update(oldSc, newSc);
+    @PutMapping
+    public StationConnectDto editConnect(@Valid @RequestBody StationConnectDto newSc) {
+        return edgeService.update(newSc);
     }
 
-    @DeleteMapping("{id}")
-    public void deleteConnect(@PathVariable("id") StationConnect sc) {
+    @DeleteMapping
+    public void deleteConnect(@Valid @RequestBody StationConnectDto sc) {
         edgeService.removeEdge(sc);
     }
 

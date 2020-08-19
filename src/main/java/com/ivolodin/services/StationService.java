@@ -1,7 +1,9 @@
 package com.ivolodin.services;
 
+import com.ivolodin.dto.StationDto;
 import com.ivolodin.entities.Station;
 import com.ivolodin.repositories.StationRepository;
+import com.ivolodin.utils.MapperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +19,9 @@ public class StationService {
     @Autowired
     private GraphService graphService;
 
-    public List<Station> getAllStations() {
-        return stationRepository.findAll();
+    public List<StationDto> getAllStations() {
+        List<Station> allStations = stationRepository.findAll();
+        return MapperUtils.mapAll(allStations, StationDto.class);
     }
 
     public Station addStation(Station newSt) {
@@ -26,18 +29,23 @@ public class StationService {
         return stationRepository.save(newSt);
     }
 
-    public Station updateStation(Station oldSt, Station newSt) {
-        oldSt.setName(newSt.getName());
-        return stationRepository.save(oldSt);
+    public StationDto updateStation(StationDto oldSt, StationDto newSt) {
+        Station st = stationRepository.findByName(oldSt.getName());
+        st.setName(newSt.getName());
+        stationRepository.save(st);
+        return MapperUtils.map(st, StationDto.class);
     }
 
-    public void remove(Station st){
-        graphService.deleteVertex(st);
-
-        stationRepository.delete(st);
+    public void remove(StationDto dto) {
+        Station st = stationRepository.findByName(dto.getName());
+        if (st != null) {
+            graphService.deleteVertex(st);
+            stationRepository.delete(st);
+        }
     }
 
-    public List<Station> getStationsByName(String stationName) {
-        return stationRepository.getByNameContaining(stationName);
+    public List<StationDto> getStationsByName(String stationName) {
+        List<Station> stationList = stationRepository.findByNameContaining(stationName);
+        return MapperUtils.mapAll(stationList, StationDto.class);
     }
 }
