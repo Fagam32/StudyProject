@@ -17,9 +17,9 @@ public class TrainEdge {
     @ManyToOne
     private Train train;
 
-    @JoinColumn(name = "edge")
+    @JoinColumn(name = "station")
     @OneToOne
-    private StationConnect stationConnect;
+    private Station station;
 
     @Column(name = "seats_left")
     private int seatsLeft;
@@ -33,4 +33,6 @@ public class TrainEdge {
     @Column(name = "arrival")
     private LocalDateTime arrival;
 
+    @Column(name = "order_in_path")
+    private Integer order;
 }

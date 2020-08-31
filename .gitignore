@@ -33,5 +33,5 @@ build/
 .vscode/
 /README.md
 /.mvn/
-/.mvn/
 /.mvn/wrapper/
+/logs/

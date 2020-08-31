@@ -21,6 +21,6 @@ public class StationConnect {
     private Station to;
 
     @Column
-    private long distanceInMinutes;
+    private Integer distanceInMinutes;
 
 }

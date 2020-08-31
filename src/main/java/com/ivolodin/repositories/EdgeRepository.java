@@ -8,4 +8,5 @@ public interface EdgeRepository extends JpaRepository<StationConnect, Integer> {
     StationConnect findByFromAndTo(Station from, Station to);
 
     void deleteByFromAndTo(Station from, Station to);
+
 }

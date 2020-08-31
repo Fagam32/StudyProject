@@ -24,9 +24,11 @@ public class StationService {
         return MapperUtils.mapAll(allStations, StationDto.class);
     }
 
-    public Station addStation(Station newSt) {
-        graphService.addVertex(newSt);
-        return stationRepository.save(newSt);
+    public StationDto addStation(StationDto newSt) {
+        Station stEntity = MapperUtils.map(newSt, Station.class);
+        stationRepository.save(stEntity);
+        graphService.addVertex(stEntity);
+        return newSt;
     }
 
     public StationDto updateStation(StationDto oldSt, StationDto newSt) {
@@ -48,4 +50,5 @@ public class StationService {
         List<Station> stationList = stationRepository.findByNameContaining(stationName);
         return MapperUtils.mapAll(stationList, StationDto.class);
     }
+
 }

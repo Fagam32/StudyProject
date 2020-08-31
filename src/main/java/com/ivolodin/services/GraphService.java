@@ -4,6 +4,7 @@ import com.ivolodin.entities.Station;
 import com.ivolodin.entities.StationConnect;
 import com.ivolodin.repositories.EdgeRepository;
 import com.ivolodin.repositories.StationRepository;
+import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -11,6 +12,7 @@ import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,14 +20,8 @@ public class GraphService {
 
     private final AsSynchronizedGraph<Station, DefaultWeightedEdge> graph;
 
-    private final StationRepository stationRepository;
-
-    private final EdgeRepository edgeRepository;
-
     @Autowired
     public GraphService(StationRepository stRepo, EdgeRepository edgeRepo) {
-        this.stationRepository = stRepo;
-        this.edgeRepository = edgeRepo;
 
         graph = new AsSynchronizedGraph<>(new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class));
 
@@ -41,12 +37,11 @@ public class GraphService {
     }
 
     public List<Station> getPathList(Station from, Station to) {
-        try {
-            //It throws NPE if there's no way between Stations. So we have to catch it
-            return DijkstraShortestPath.findPathBetween(graph, from, to).getVertexList();
-        } catch (NullPointerException e) {
-            return null;
+        GraphPath<Station, DefaultWeightedEdge> path = DijkstraShortestPath.findPathBetween(graph, from, to);
+        if (path == null) {
+            return new ArrayList<>();
         }
+        return path.getVertexList();
     }
 
     public void addEdge(Station fr, Station to, long dist) {

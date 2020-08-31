@@ -1,7 +1,6 @@
 package com.ivolodin.controller;
 
 import com.ivolodin.dto.StationDto;
-import com.ivolodin.entities.Station;
 import com.ivolodin.services.StationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,22 +22,22 @@ public class StationController {
     }
 
     @PostMapping
-    public Station addNewStation(@RequestBody Station station) {
-        return stationService.addStation(station);
+    public StationDto addNewStation(@Valid @RequestBody StationDto stationDto) {
+        return stationService.addStation(stationDto);
     }
 
     @PutMapping("{name}")
-    public StationDto updateStation(@Valid @PathVariable("name") StationDto oldStation,
+    public StationDto updateStation(@Valid StationDto oldStation,
                                     @Valid @RequestBody StationDto newStation) {
         return stationService.updateStation(oldStation, newStation);
     }
 
     @DeleteMapping("{name}")
-    public void deleteStation(@Valid @PathVariable("name") StationDto station) {
+    public void deleteStation(@Valid StationDto station) {
         stationService.remove(station);
     }
 
-    @GetMapping
+    @GetMapping(params = {"name"})
     public List<StationDto> searchByName(@RequestParam("name") String stationName) {
         return stationService.getStationsByName(stationName);
     }

@@ -32,6 +32,7 @@ public class EdgeService {
 
         checkConnectExisting(newSc, frSt, toSt);
         graphService.addEdge(frSt, toSt, newSc.getDistance());
+
         StationConnect scEntity = new StationConnect();
         scEntity.setFrom(frSt);
         scEntity.setTo(toSt);
@@ -73,6 +74,10 @@ public class EdgeService {
         return MapperUtils.map(connect, StationConnectDto.class);
     }
 
+    public StationConnect getStationConnect(Station fr, Station to){
+       return edgeRepository.findByFromAndTo(fr, to);
+    }
+
     private void checkConnectExisting(StationConnectDto newSc, Station frSt, Station toSt) {
         if (frSt == null || toSt == null) {
             if (frSt == null)
@@ -80,5 +85,10 @@ public class EdgeService {
             else
                 throw new EntityNotFoundException("Station with name " + newSc.getToStation() + " not found");
         }
+    }
+
+
+    public Integer getDistanceBetweenStations(Station fr, Station to) {
+        return edgeRepository.findByFromAndTo(fr, to).getDistanceInMinutes();
     }
 }

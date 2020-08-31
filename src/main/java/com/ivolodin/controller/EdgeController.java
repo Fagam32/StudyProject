@@ -16,13 +16,13 @@ public class EdgeController {
     @Autowired
     private EdgeService edgeService;
 
-    @GetMapping("/edges")
+    @GetMapping
     public List<StationConnectDto> getAllConnects() {
         return edgeService.getAll();
     }
 
     @PostMapping
-    public StationConnectDto addNewConnect(@Valid StationConnectDto scDto) {
+    public StationConnectDto addNewConnect(@Valid @RequestBody StationConnectDto scDto) {
         return edgeService.addNewEdge(scDto);
     }
 
@@ -31,10 +31,8 @@ public class EdgeController {
         return edgeService.update(newSc);
     }
 
-    @DeleteMapping
-    public void deleteConnect(@Valid @RequestBody StationConnectDto sc) {
+    @DeleteMapping("{fromStation}/{toStation}")
+    public void deleteConnect(@Valid StationConnectDto sc) {
         edgeService.removeEdge(sc);
     }
-
-
 }
