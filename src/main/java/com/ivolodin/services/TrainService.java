@@ -1,5 +1,6 @@
 package com.ivolodin.services;
 
+import com.ivolodin.dto.StationDto;
 import com.ivolodin.dto.TrainDto;
 import com.ivolodin.dto.TrainEdgeDto;
 import com.ivolodin.entities.Station;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,5 +163,12 @@ public class TrainService {
         train.setArrival(trainPath.get(trainPath.size() - 1).getArrival());
         trainRepository.save(train);
         trainEdgeRepository.saveAll(trainPath);
+    }
+
+    public List<TrainDto> getTrainsOnStation(StationDto stationDto, LocalDate date) {
+        if (date.isBefore(LocalDate.now()))
+            throw new IllegalArgumentException("Date is in past");
+        List<Train> trains = trainRepository.findTrainsByStationAndDate(stationDto.getName(), java.sql.Date.valueOf(date));
+        return MapperUtils.mapAll(trains, TrainDto.class);
     }
 }
