@@ -1,6 +1,7 @@
 package com.ivolodin.controller;
 
 import com.ivolodin.dto.StationDto;
+import com.ivolodin.dto.TrainDto;
 import com.ivolodin.services.StationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -42,3 +43,4 @@ public class StationController {
         return stationService.getStationsByName(stationName);
     }
 }
+

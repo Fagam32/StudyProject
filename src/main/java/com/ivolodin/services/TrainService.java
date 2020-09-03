@@ -11,6 +11,7 @@ import com.ivolodin.repositories.StationRepository;
 import com.ivolodin.repositories.TrainEdgeRepository;
 import com.ivolodin.repositories.TrainRepository;
 import com.ivolodin.utils.MapperUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,9 @@ public class TrainService {
 
     @Autowired
     private TrainEdgeRepository trainEdgeRepository;
+
+    @Autowired
+    private AmqpTemplate template;
 
     public List<TrainDto> getAllTrains() {
         List<Train> all = trainRepository.findAll();
@@ -74,6 +78,7 @@ public class TrainService {
         trainRepository.save(train);
 
         createPathForTrain(train);
+        sendRefreshMessageToTableau(train);
 
         return MapperUtils.map(train, TrainDto.class);
     }
@@ -124,8 +129,9 @@ public class TrainService {
         train.setArrival(lastEdge.getArrival());
 
         trainRepository.save(train);
-    }
 
+        sendRefreshMessageToTableau(train);
+    }
 
     public TrainDto getTrainInfo(TrainDto trainDto) {
         Train train = trainRepository.findTrainByTrainName(trainDto.getTrainName());
@@ -150,6 +156,7 @@ public class TrainService {
             }
         }
         updateTrainTimes(train, trainPath);
+        sendRefreshMessageToTableau(train);
     }
 
     private void updateTrainTimes(Train train, List<TrainEdge> trainPath) {
@@ -169,6 +176,22 @@ public class TrainService {
         if (date.isBefore(LocalDate.now()))
             throw new IllegalArgumentException("Date is in past");
         List<Train> trains = trainRepository.findTrainsByStationAndDate(stationDto.getName(), java.sql.Date.valueOf(date));
+
         return MapperUtils.mapAll(trains, TrainDto.class);
+    }
+
+    private void sendRefreshMessageToTableau(Train train) {
+        StringBuilder sb = new StringBuilder();
+        List<TrainEdge> trainPath = trainEdgeRepository.getTrainPath(train);
+        for (TrainEdge edge : trainPath) {
+            if (edge.getArrival() != null && edge.getArrival().toLocalDate().isEqual(LocalDate.now())) {
+                sb.append(edge.getStation().getName()).append("/");
+                continue;
+            }
+            if (edge.getDeparture() != null && edge.getDeparture().toLocalDate().isEqual(LocalDate.now())) {
+                sb.append(edge.getStation().getName()).append("/");
+            }
+        }
+        template.convertAndSend("stationUpdates", sb.toString());
     }
 }

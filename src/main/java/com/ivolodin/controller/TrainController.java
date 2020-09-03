@@ -1,8 +1,10 @@
 package com.ivolodin.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.ivolodin.dto.StationDto;
 import com.ivolodin.dto.TrainDto;
 import com.ivolodin.dto.TrainEdgeDto;
+import com.ivolodin.dto.View;
 import com.ivolodin.services.TrainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -43,6 +45,8 @@ public class TrainController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+
+    @JsonView(View.Public.class)
     @GetMapping(value = "{name}", params = {"date"})
     public List<TrainDto> getTrainsOnDate(@Valid StationDto stationDto,
                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){

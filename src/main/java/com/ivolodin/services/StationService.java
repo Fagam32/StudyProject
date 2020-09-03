@@ -4,6 +4,7 @@ import com.ivolodin.dto.StationDto;
 import com.ivolodin.entities.Station;
 import com.ivolodin.repositories.StationRepository;
 import com.ivolodin.utils.MapperUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,7 @@ public class StationService {
         Station stEntity = MapperUtils.map(newSt, Station.class);
         stationRepository.save(stEntity);
         graphService.addVertex(stEntity);
+
         return newSt;
     }
 
