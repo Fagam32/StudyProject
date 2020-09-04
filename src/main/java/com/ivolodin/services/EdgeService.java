@@ -6,13 +6,14 @@ import com.ivolodin.entities.StationConnect;
 import com.ivolodin.repositories.EdgeRepository;
 import com.ivolodin.repositories.StationRepository;
 import com.ivolodin.utils.MapperUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-
+@Slf4j
 @Transactional
 @Service
 public class EdgeService {
@@ -39,6 +40,7 @@ public class EdgeService {
         scEntity.setDistanceInMinutes(newSc.getDistance());
 
         StationConnect saved = edgeRepository.save(scEntity);
+        log.info("Edge {} added" + newSc.toString());
         return MapperUtils.map(saved, StationConnectDto.class);
     }
 
@@ -53,6 +55,7 @@ public class EdgeService {
         edgeRepository.deleteByFromAndTo(frSt, toSt);
 
         graphService.deleteEdge(frSt, toSt);
+        log.info("Edge {} deleted", sc.toString());
     }
 
     public List<StationConnectDto> getAll() {
@@ -70,7 +73,7 @@ public class EdgeService {
         edgeRepository.save(connect);
 
         graphService.updateEdge(connect.getFrom(), connect.getTo(), connect.getDistanceInMinutes());
-
+        log.info("Edge {} updated", newSc.toString());
         return MapperUtils.map(connect, StationConnectDto.class);
     }
 

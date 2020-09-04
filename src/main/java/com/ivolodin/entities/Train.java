@@ -1,6 +1,7 @@
 package com.ivolodin.entities;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -36,9 +37,11 @@ public class Train {
     @Column(name = "arrival")
     private LocalDateTime arrival;
 
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train")
     private Set<Ticket> tickets;
 
+    @ToString.Include
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train")
     private List<TrainEdge> path;
 }

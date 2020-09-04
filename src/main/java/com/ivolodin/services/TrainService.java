@@ -11,6 +11,7 @@ import com.ivolodin.repositories.StationRepository;
 import com.ivolodin.repositories.TrainEdgeRepository;
 import com.ivolodin.repositories.TrainRepository;
 import com.ivolodin.utils.MapperUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+@Slf4j
 @Transactional
 @Service
 public class TrainService {
@@ -79,7 +80,7 @@ public class TrainService {
 
         createPathForTrain(train);
         sendRefreshMessageToTableau(train);
-
+        log.info("Train {} added", train.toString());
         return MapperUtils.map(train, TrainDto.class);
     }
 
@@ -170,13 +171,13 @@ public class TrainService {
         train.setArrival(trainPath.get(trainPath.size() - 1).getArrival());
         trainRepository.save(train);
         trainEdgeRepository.saveAll(trainPath);
+        log.info("Train {} updated", train.toString());
     }
 
     public List<TrainDto> getTrainsOnStation(StationDto stationDto, LocalDate date) {
         if (date.isBefore(LocalDate.now()))
             throw new IllegalArgumentException("Date is in past");
         List<Train> trains = trainRepository.findTrainsByStationAndDate(stationDto.getName(), java.sql.Date.valueOf(date));
-
         return MapperUtils.mapAll(trains, TrainDto.class);
     }
 
@@ -193,5 +194,6 @@ public class TrainService {
             }
         }
         template.convertAndSend("stationUpdates", sb.toString());
+        log.info("Message {} is sent to RabbitMQ", sb.toString());
     }
 }

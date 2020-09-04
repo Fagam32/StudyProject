@@ -2,15 +2,17 @@ package com.ivolodin.entities;
 
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
-
+@ToString
 @Data
 @Entity
 @Table(name = "users")
 public class User {
+    @ToString.Exclude
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -19,8 +21,9 @@ public class User {
     private String email;
 
     @Column(name = "user_name")
-    private String userName;
+    private String username;
 
+    @ToString.Exclude
     @Column(name = "password")
     private String password;
 
@@ -33,6 +36,7 @@ public class User {
     @Column
     private LocalDate birthDate;
 
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Set<Ticket> tickets;
 

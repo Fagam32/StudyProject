@@ -4,13 +4,14 @@ import com.ivolodin.dto.StationDto;
 import com.ivolodin.entities.Station;
 import com.ivolodin.repositories.StationRepository;
 import com.ivolodin.utils.MapperUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-
+@Slf4j
 @Service
 @Transactional
 public class StationService {
@@ -29,7 +30,7 @@ public class StationService {
         Station stEntity = MapperUtils.map(newSt, Station.class);
         stationRepository.save(stEntity);
         graphService.addVertex(stEntity);
-
+        log.info("Station {} added", newSt.toString());
         return newSt;
     }
 
@@ -37,14 +38,16 @@ public class StationService {
         Station st = stationRepository.findByName(oldSt.getName());
         st.setName(newSt.getName());
         stationRepository.save(st);
+        log.info("Station {} updated", newSt.toString());
         return MapperUtils.map(st, StationDto.class);
     }
 
-    public void remove(StationDto dto) {
-        Station st = stationRepository.findByName(dto.getName());
+    public void remove(StationDto oldSt) {
+        Station st = stationRepository.findByName(oldSt.getName());
         if (st != null) {
             graphService.deleteVertex(st);
             stationRepository.delete(st);
+            log.info("Station {} deleted", oldSt.toString());
         }
     }
 
