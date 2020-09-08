@@ -7,6 +7,7 @@ import com.ivolodin.repositories.TicketRepository;
 import com.ivolodin.repositories.TrainRepository;
 import com.ivolodin.repositories.UserRepository;
 import com.ivolodin.utils.MapperUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
+@Slf4j
 @Transactional
 @Service
 public class TicketService {
@@ -30,7 +31,6 @@ public class TicketService {
 
     @Autowired
     private StationRepository stationRepository;
-
 
     @Autowired
     private TicketRepository ticketRepository;
@@ -75,7 +75,7 @@ public class TicketService {
         ticketRepository.save(ticket);
 
         trainService.updateSeatsForTrain(train, fromEdge, toEdge, -1);
-
+        log.info("Ticket {} is bought", ticket);
     }
 
     private void checkUserTickets(Train train, User user) {
@@ -119,10 +119,14 @@ public class TicketService {
             if (frName.equals(ticketDto.getFromStation())
                     && toName.equals(ticketDto.getToStation())
                     && trainName.equals(ticketDto.getTrainName())) {
+                log.info("Ticket {} is canceled", ticket);
                 ticketRepository.delete(ticket);
                 break;
             }
         }
+        Train train = trainRepository.findTrainByTrainName(ticketDto.getTrainName());
+
+        trainService.updateSeatsForTrain(train, ticketDto.getFromStation(), ticketDto.getToStation(), 1);
     }
 
     public List<TicketDto> getTrainTickets(String trainName) {

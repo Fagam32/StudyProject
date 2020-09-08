@@ -15,4 +15,6 @@ public interface TrainEdgeRepository extends JpaRepository<TrainEdge, Integer> {
     List<TrainEdge> getTrainPath(Train train);
 
     Boolean existsTrainEdgeByStation(Station station);
+
+    TrainEdge getTrainEdgeByStationNameAndTrain(String stationName, Train train);
 }

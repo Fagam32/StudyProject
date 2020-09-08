@@ -81,7 +81,7 @@ public class TrainService {
 
         createPathForTrain(train);
         sendRefreshMessageToTableau(train);
-        log.info("Train {} added", train.toString());
+        log.info("Train {} added", train);
         return MapperUtils.map(train, TrainDto.class);
     }
 
@@ -284,7 +284,6 @@ public class TrainService {
             return;
         boolean foundStart = false;
 
-
         for (TrainEdge edge : train.getPath()) {
             if (edge.equals(toEdge)) {
                 break;
@@ -336,5 +335,14 @@ public class TrainService {
 
         sendRefreshMessageToTableau(stations);
         log.info("Train {} deleted", trainName);
+    }
+
+    public void updateSeatsForTrain(Train train, String fromStation, String toStation, int val) {
+
+        TrainEdge frEdge = trainEdgeRepository.getTrainEdgeByStationNameAndTrain(fromStation, train);
+        TrainEdge toEdge = trainEdgeRepository.getTrainEdgeByStationNameAndTrain(toStation, train);
+        if (frEdge == null || toEdge == null)
+            throw new IllegalArgumentException("No edges with such name found: " + fromStation + " and " + toStation);
+        updateSeatsForTrain(train, frEdge, toEdge, val);
     }
 }
