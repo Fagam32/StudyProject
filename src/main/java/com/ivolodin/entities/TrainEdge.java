@@ -1,11 +1,17 @@
 package com.ivolodin.entities;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"train", "station", "seatsLeft"})
 @Entity
 @Table(name = "train_paths")
 public class TrainEdge {

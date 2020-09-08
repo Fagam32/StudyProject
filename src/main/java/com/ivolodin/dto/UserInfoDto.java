@@ -4,28 +4,22 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 public class UserInfoDto {
     @JsonView(View.Public.class)
     private String userName;
 
-    @JsonView(View.Private.class)
+    @JsonView(View.Public.class)
     private String name;
 
-    @JsonView(View.Private.class)
+    @JsonView(View.Public.class)
     private String surname;
 
-    @JsonView(View.Private.class)
-    private LocalDate birthday;
-
     @JsonView(View.Public.class)
-    private List<String> roles;
+    private LocalDate birthdate;
 
-    @JsonView(View.Public.class)
-    private String jwtToken;
-    
     @JsonView(View.Private.class)
-    private List<TicketDto> tickets;
+    private String email;
+
 }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,6 +30,7 @@ public class TrainController {
         return trainService.getAllTrains();
     }
 
+    @JsonView(View.Public.class)
     @GetMapping("{trainName}")
     public TrainDto getTrainInfo(TrainDto trainDto){
         return trainService.getTrainInfo(trainDto);
@@ -39,17 +41,16 @@ public class TrainController {
         return trainService.addNewTrain(trainDto);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping
     public ResponseEntity<Object> updateTrainStandings(@RequestBody List<TrainEdgeDto> edgeDtos){
         trainService.updateStandings(edgeDtos);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-    @JsonView(View.Public.class)
-    @GetMapping(value = "{name}", params = {"date"})
-    public List<TrainDto> getTrainsOnDate(@Valid StationDto stationDto,
-                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
-        return trainService.getTrainsOnStation(stationDto, date);
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("{trainName}")
+    public void deleteTrain(@PathVariable String trainName){
+        trainService.deleteTrainByName(trainName);
     }
 }

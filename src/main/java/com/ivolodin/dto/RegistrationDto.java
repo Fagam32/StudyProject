@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Data
 public class RegistrationDto {
     @NotBlank
-    @Size(min = 3, max = 45)
+    @Size(min = 3, max = 45, message = "Username length must be more than 3 and less than 45")
     private String username;
 
     @NotBlank
@@ -31,4 +31,10 @@ public class RegistrationDto {
     @Size(min = 3)
     private String password;
 
+    public void optimize(){
+        name = name.trim();
+        name = name.substring(0, 1).toUpperCase() + name.substring(1);
+        surname = surname.trim();
+        surname = surname.substring(0, 1).toUpperCase() + surname.substring(1);
+    }
 }

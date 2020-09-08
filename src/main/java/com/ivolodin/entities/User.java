@@ -1,14 +1,15 @@
 package com.ivolodin.entities;
 
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
-@ToString
-@Data
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"email","username", "name", "surname"})
 @Entity
 @Table(name = "users")
 public class User {
@@ -27,14 +28,14 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column
+    @Column(name = "name")
     private String name;
 
-    @Column
+    @Column(name = "surname")
     private String surname;
 
-    @Column
-    private LocalDate birthDate;
+    @Column(name = "birth_date")
+    private LocalDate birthdate;
 
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")

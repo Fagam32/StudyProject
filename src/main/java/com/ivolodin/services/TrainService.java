@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 @Slf4j
 @Transactional
 @Service
@@ -156,29 +157,147 @@ public class TrainService {
                 }
             }
         }
-        updateTrainTimes(train, trainPath);
-        sendRefreshMessageToTableau(train);
+        trainEdgeRepository.saveAll(trainPath);
+        refreshTrainTimes(train);
     }
 
-    private void updateTrainTimes(Train train, List<TrainEdge> trainPath) {
-        for (int i = 1; i < trainPath.size() - 1; i++) {
-            TrainEdge curEdge = trainPath.get(i);
-            TrainEdge nextEdge = trainPath.get(i + 1);
+    public void refreshTrainTimes(Train train) {
+        List<TrainEdge> path = train.getPath();
+
+        TrainEdge first = path.get(0);
+        TrainEdge second = path.get(1);
+        second.setArrival(train.getDeparture()
+                .plusMinutes(edgeService.getDistanceBetweenStations(first.getStation(), second.getStation())));
+
+        for (int i = 1; i < path.size() - 1; i++) {
+            TrainEdge curEdge = path.get(i);
+            TrainEdge nextEdge = path.get(i + 1);
             Integer distance = edgeService.getDistanceBetweenStations(curEdge.getStation(), nextEdge.getStation());
             curEdge.setDeparture(curEdge.getArrival().plusMinutes(curEdge.getStandingMinutes()));
             nextEdge.setArrival(curEdge.getDeparture().plusMinutes(distance));
         }
-        train.setArrival(trainPath.get(trainPath.size() - 1).getArrival());
+        train.setArrival(path.get(path.size() - 1).getArrival());
         trainRepository.save(train);
-        trainEdgeRepository.saveAll(trainPath);
-        log.info("Train {} updated", train.toString());
+        trainEdgeRepository.saveAll(path);
+
+        sendRefreshMessageToTableau(train);
+        log.info("Train {} updated", train.getTrainName());
     }
 
-    public List<TrainDto> getTrainsOnStation(StationDto stationDto, LocalDate date) {
+    public List<TrainDto> getAllTrainsOnStation(String stationName, LocalDate date) {
+        if (date == null)
+            date = LocalDate.now();
         if (date.isBefore(LocalDate.now()))
             throw new IllegalArgumentException("Date is in past");
-        List<Train> trains = trainRepository.findTrainsByStationAndDate(stationDto.getName(), java.sql.Date.valueOf(date));
+        if (stationRepository.findByName(stationName) == null)
+            throw new EntityNotFoundException("No station found with name: " + stationName);
+        List<Train> trains = trainRepository.findTrainsByStationAndDate(stationName, java.sql.Date.valueOf(date));
         return MapperUtils.mapAll(trains, TrainDto.class);
+    }
+
+    public List<TrainDto> getTrainsDepartingFromStation(StationDto station, LocalDate date) {
+        return getTrainsDepartingFromStation(station.getName(), date);
+    }
+
+    public List<TrainDto> getTrainsDepartingFromStation(String stationName, LocalDate date) {
+        if (date.isBefore(LocalDate.now()))
+            throw new IllegalArgumentException("Date is in past");
+        if (stationRepository.findByName(stationName) == null)
+            throw new EntityNotFoundException("No station found with name: " + stationName);
+        List<Train> trains = trainRepository.findTrainsDepartingFromStation(stationName, java.sql.Date.valueOf(date));
+        return MapperUtils.mapAll(trains, TrainDto.class);
+
+    }
+
+    public List<TrainDto> getTrainsInDate(String from, String to, LocalDate localDate) {
+        StationDto frSt = new StationDto();
+        frSt.setName(from);
+        StationDto toSt = new StationDto();
+        toSt.setName(to);
+        return getTrainsInDate(frSt, toSt, localDate);
+
+    }
+
+    public List<TrainDto> getTrainsInDate(StationDto from, StationDto to, LocalDate date) {
+        List<TrainDto> trainsOnFromStation = getTrainsDepartingFromStation(from, date);
+        List<TrainDto> foundTrains = new ArrayList<>();
+        for (TrainDto train : trainsOnFromStation) {
+            boolean foundFromStation = false;
+            boolean foundToStation = false;
+            for (TrainEdgeDto edge : train.getPath()) {
+                if (from.getName().equalsIgnoreCase(edge.getStationName())) {
+                    foundFromStation = true;
+                }
+                if (to.getName().equalsIgnoreCase(edge.getStationName())) {
+                    if (foundFromStation) {
+                        foundToStation = true;
+                    }
+                    break;
+                }
+            }
+
+            if (foundFromStation && foundToStation) {
+                foundTrains.add(train);
+            }
+        }
+
+        return foundTrains;
+    }
+
+    public Boolean hasAvailableSeatsOnPath(Train train, TrainEdge fromEdge, TrainEdge toEdge) {
+        if (!fromEdge.getTrain().equals(train) || !toEdge.getTrain().equals(train))
+            return false;
+        boolean foundStart = false;
+        int minSeats = 0;
+
+        for (TrainEdge edge : train.getPath()) {
+            if (edge.equals(fromEdge)) {
+                foundStart = true;
+                minSeats = edge.getSeatsLeft();
+            }
+            if (foundStart) {
+                minSeats = Math.min(edge.getSeatsLeft(), minSeats);
+            }
+            if (edge.equals(toEdge)) {
+                break;
+            }
+        }
+        if (!foundStart)
+            return false;
+
+        return minSeats > 0;
+    }
+
+    /**
+     * Updates available seats for train between fromEdge and toEdge.
+     * If val > 0 method adds available seats, else reduces
+     *
+     * @param train    the train needed to be updated
+     * @param fromEdge Starting edge to update
+     * @param toEdge   Ending edge to update
+     * @param val      Value to add/reduce to available seats
+     */
+    public void updateSeatsForTrain(Train train, TrainEdge fromEdge, TrainEdge toEdge, int val) {
+        if (!fromEdge.getTrain().equals(train) || !toEdge.getTrain().equals(train))
+            return;
+        if (val == 0)
+            return;
+        boolean foundStart = false;
+
+
+        for (TrainEdge edge : train.getPath()) {
+            if (edge.equals(toEdge)) {
+                break;
+            }
+            if (edge.equals(fromEdge)) {
+                foundStart = true;
+            }
+            if (foundStart) {
+                edge.setSeatsLeft(edge.getSeatsLeft() + val);
+            }
+
+        }
+        trainRepository.save(train);
     }
 
     private void sendRefreshMessageToTableau(Train train) {
@@ -195,5 +314,27 @@ public class TrainService {
         }
         template.convertAndSend("stationUpdates", sb.toString());
         log.info("Message {} is sent to RabbitMQ", sb.toString());
+    }
+
+    private void sendRefreshMessageToTableau(List<String> stationNames) {
+        StringBuilder sb = new StringBuilder();
+        stationNames.forEach(x -> sb.append(x).append('/'));
+
+        template.convertAndSend("stationUpdates", sb.toString());
+        log.info("Message {} is sent to RabbitMQ", sb.toString());
+    }
+
+    //N+1 problem here
+    public void deleteTrainByName(String trainName) {
+        Train train = trainRepository.findTrainByTrainName(trainName);
+        if (train == null)
+            return;
+        ArrayList<String> stations = new ArrayList<>();
+        train.getPath().forEach(x -> stations.add(x.getStation().getName()));
+
+        trainRepository.delete(train);
+
+        sendRefreshMessageToTableau(stations);
+        log.info("Train {} deleted", trainName);
     }
 }

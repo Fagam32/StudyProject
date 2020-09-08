@@ -14,7 +14,6 @@ public class JwtUtils {
 
     private static final String jwtSecret = "super_secret_key";
 
-    private static final int expired = 86400000;
 
     public String generateToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
@@ -22,7 +21,7 @@ public class JwtUtils {
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + expired))
+                .setExpiration(null)
                 .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
     }

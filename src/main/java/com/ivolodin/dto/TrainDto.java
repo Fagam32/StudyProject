@@ -11,8 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class TrainDto {
-
+public class TrainDto{
 
     @JsonView(View.Public.class)
     @NotBlank
@@ -42,8 +41,5 @@ public class TrainDto {
 
     @JsonView(View.Public.class)
     private List<TrainEdgeDto> path;
-
-    @JsonView(View.Private.class)
-    private List<TicketDto> tickets;
 
 }

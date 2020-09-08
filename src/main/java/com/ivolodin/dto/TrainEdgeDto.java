@@ -20,6 +20,9 @@ public class TrainEdgeDto {
     private String stationName;
 
     @JsonView(View.Public.class)
+    private Integer seatsLeft;
+
+    @JsonView(View.Public.class)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime departure;
 

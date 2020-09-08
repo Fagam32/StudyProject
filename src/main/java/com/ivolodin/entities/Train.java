@@ -1,14 +1,16 @@
 package com.ivolodin.entities;
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(exclude = {"tickets", "path"})
 @Entity
 @Table(name = "trains")
 public class Train {
@@ -41,7 +43,7 @@ public class Train {
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train")
     private Set<Ticket> tickets;
 
-    @ToString.Include
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train")
     private List<TrainEdge> path;
 }
