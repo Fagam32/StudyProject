@@ -1,5 +1,6 @@
 package com.ivolodin.entities;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,9 +8,10 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
+@EqualsAndHashCode
 @Entity
 @Table(name = "tickets")
 public class Ticket {
@@ -18,27 +20,22 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @JoinColumn(name = "train")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "train_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Train train;
 
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user_id")
     @ManyToOne
     private User user;
 
-    @JoinColumn(name = "from_station")
-    @ManyToOne
-    private Station frStation;
+    @JoinColumn(name = "from_edge")
+    @OneToOne
+    private TrainEdge fromEdge;
 
-    @JoinColumn(name = "to_station")
-    @ManyToOne
-    private Station toStation;
+    @JoinColumn(name = "to_edge")
+    @OneToOne
+    private TrainEdge toEdge;
 
-    @Column(name = "departure")
-    private LocalDateTime departure;
-
-    @Column(name = "arrival")
-    private LocalDateTime arrival;
-
-
+    @Column(name = "purchase_date")
+    private LocalDateTime purchaseDate;
 }

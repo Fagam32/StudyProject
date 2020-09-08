@@ -1,19 +1,22 @@
 package com.ivolodin.controller;
 
-import com.ivolodin.entities.Station;
-import com.ivolodin.entities.Train;
-import com.ivolodin.service.StationService;
-import com.ivolodin.service.TrainService;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.ivolodin.dto.StationDto;
+import com.ivolodin.dto.TrainDto;
+import com.ivolodin.dto.View;
+import com.ivolodin.services.StationService;
+import com.ivolodin.services.TrainService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 
-@Controller
+@CrossOrigin
+@RestController
 @RequestMapping("/stations")
 public class StationController {
 
@@ -24,32 +27,39 @@ public class StationController {
     private TrainService trainService;
 
     @GetMapping
-    public ModelAndView getAllStations() {
-        ModelAndView modelAndView = new ModelAndView("stations");
-        List<Station> allStations = stationService.getAllStations();
-        modelAndView.addObject("stations", allStations);
-        return modelAndView;
+    public List<StationDto> getAllStations() {
+        return stationService.getAllStations();
     }
 
-    @PreAuthorize(value = "hasAuthority('ADMIN')")
-    @PostMapping(params = "stationName")
-    public String addStation(@NotNull @RequestParam String stationName) {
-        stationService.addStation(stationName);
-        return "redirect:/stations";
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping
+    public StationDto addNewStation(@Valid @RequestBody StationDto stationDto) {
+        return stationService.addStation(stationDto);
     }
 
-    @PreAuthorize(value = "hasAuthority('ADMIN')")
-    @PostMapping(params = "stationId")
-    public String deleteStation(@NotNull @RequestParam Integer stationId) {
-        stationService.deleteStation(stationId);
-        return "redirect:/stations";
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("{name}")
+    public StationDto updateStation(@Valid StationDto oldStation,
+                                    @Valid @RequestBody StationDto newStation) {
+        return stationService.updateStation(oldStation, newStation);
     }
 
-    @GetMapping("/{stationName}/trains")
-    public ModelAndView showTrainsOnStation(@PathVariable String stationName) {
-        ModelAndView modelAndView = new ModelAndView("trainsOnStation");
-        List<Train> trains = trainService.getTrainsOnStation(stationName);
-        modelAndView.addObject("trains", trains);
-        return modelAndView;
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("{name}")
+    public void deleteStation(@Valid StationDto station) {
+        stationService.remove(station);
+    }
+
+    @GetMapping(params = {"name"})
+    public List<StationDto> searchByName(@RequestParam("name") String stationName) {
+        return stationService.getStationsByName(stationName);
+    }
+
+    @JsonView(View.Public.class)
+    @GetMapping(value = "{stationName}", params = {"date"})
+    public List<TrainDto> getTrainsOnDate(@PathVariable String stationName,
+                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return trainService.getAllTrainsOnStation(stationName, date);
     }
 }
+

@@ -1,51 +1,71 @@
 package com.ivolodin.controller;
 
-import com.ivolodin.entities.Ticket;
-import com.ivolodin.service.TicketService;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.ivolodin.dto.TicketDto;
+import com.ivolodin.dto.View;
+import com.ivolodin.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.util.ArrayList;
+import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("/tickets")
 public class TicketController {
 
     @Autowired
     private TicketService ticketService;
 
-    @PostMapping(value = "/buyTicket", params = {"trainId", "fromStation", "toStation"})
-    public String buyTicket(Principal principal,
-                            RedirectAttributes redirectAttributes,
-                            @RequestParam Integer trainId,
-                            @RequestParam String fromStation,
-                            @RequestParam String toStation) {
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    @PutMapping
+    public ResponseEntity<Object> buyTicket(@RequestBody @Valid TicketDto ticketDto,
+                                            Authentication authentication,
+                                            BindingResult bindingResult) {
+        HashMap<String, String> body = new HashMap<>();
+        if (bindingResult.hasErrors()) {
+            body.put("message", bindingResult.getAllErrors().get(0).getDefaultMessage());
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        }
+        ticketService.buyTicket(ticketDto, authentication);
 
-        ticketService.buyTicket(principal.getName(), trainId, fromStation, toStation);
-        redirectAttributes.addAttribute("message", "You have successfully bought ticket!");
-        return "redirect:/myTickets";
+        body.put("message", "Successful operation");
+        return ResponseEntity.ok().body(body);
     }
 
-    @PostMapping(value = "/myTickets", params = {"ticketId"})
-    public String cancelTicket(@RequestParam Integer ticketId) {
-        ticketService.cancelTicket(ticketId);
-        return "redirect:/myTickets";
+    @JsonView(View.Private.class)
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    @GetMapping
+    public List<TicketDto> getUsersTickets(Authentication authentication) {
+        return ticketService.getUsersTickets(authentication);
     }
 
-    @GetMapping("/myTickets")
-    public ModelAndView getUserTickets(Principal principal) {
-        ModelAndView modelAndView = new ModelAndView("myTickets");
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    @DeleteMapping
+    public ResponseEntity<Object> cancelTicket(@Valid @RequestBody TicketDto ticketDto,
+                                               Authentication authentication,
+                                               BindingResult bindingResult) {
+        HashMap<String, String> body = new HashMap<>();
+        if (bindingResult.hasErrors()) {
+            body.put("message", bindingResult.getAllErrors().get(0).getDefaultMessage());
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        }
+        ticketService.cancelTicket(ticketDto, authentication);
 
-        List<Ticket> tickets = ticketService.getUserTickets(principal.getName());
-        if (tickets == null) tickets = new ArrayList<>();
-        modelAndView.addObject("tickets", tickets);
-
-        return modelAndView;
+        return ResponseEntity.ok().body(body);
     }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @JsonView(View.Private.class)
+    @GetMapping("{trainName}")
+    public List<TicketDto> getTrainTickets(@PathVariable String trainName){
+        return ticketService.getTrainTickets(trainName);
+    }
+
 }

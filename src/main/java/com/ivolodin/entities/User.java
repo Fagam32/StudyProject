@@ -1,20 +1,19 @@
 package com.ivolodin.entities;
 
+
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
-
+@NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
+@EqualsAndHashCode(of = {"email","username", "name", "surname"})
 @Entity
 @Table(name = "users")
 public class User {
+    @ToString.Exclude
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -23,20 +22,22 @@ public class User {
     private String email;
 
     @Column(name = "user_name")
-    private String userName;
+    private String username;
 
+    @ToString.Exclude
     @Column(name = "password")
     private String password;
 
-    @Column
+    @Column(name = "name")
     private String name;
 
-    @Column
+    @Column(name = "surname")
     private String surname;
 
-    @Column
-    private LocalDate birthDate;
+    @Column(name = "birth_date")
+    private LocalDate birthdate;
 
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Set<Ticket> tickets;
 
@@ -44,6 +45,4 @@ public class User {
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(value = EnumType.STRING)
     private Set<Role> roles;
-
-
 }

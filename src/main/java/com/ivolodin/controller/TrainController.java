@@ -1,68 +1,56 @@
 package com.ivolodin.controller;
 
-import com.ivolodin.entities.Ticket;
-import com.ivolodin.entities.Train;
-import com.ivolodin.entities.TrainEdge;
-import com.ivolodin.service.TicketService;
-import com.ivolodin.service.TrainService;
-import javassist.NotFoundException;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.ivolodin.dto.StationDto;
+import com.ivolodin.dto.TrainDto;
+import com.ivolodin.dto.TrainEdgeDto;
+import com.ivolodin.dto.View;
+import com.ivolodin.services.TrainService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
-@Controller
+@RestController
+@CrossOrigin
 @RequestMapping("/trains")
 public class TrainController {
 
     @Autowired
     private TrainService trainService;
 
-    @Autowired
-    private TicketService ticketService;
-
     @GetMapping
-    public ModelAndView showAllTrains() {
-        ModelAndView modelAndView = new ModelAndView("trains");
-        List<Train> allTrains = trainService.getAllTrains();
-        modelAndView.addObject("trains", allTrains);
-        return modelAndView;
+    public List<TrainDto> getAllTrains() {
+        return trainService.getAllTrains();
     }
 
-    @GetMapping("/{trainId}")
-    public ModelAndView showTrainPathAndTickets(@PathVariable Integer trainId) throws NotFoundException {
-        ModelAndView modelAndView = new ModelAndView("trainPathAndTickets");
-        Train train = trainService.getTrainById(trainId);
-        if (train == null) {
-            throw new NotFoundException("No train with ID: {" + trainId + "} found ");
-        }
-
-        List<TrainEdge> path = trainService.getTrainPath(train);
-        Set<Ticket> tickets = ticketService.getTicketsOnTrain(train);
-        modelAndView.addObject("train", train);
-        modelAndView.addObject("path", path);
-        modelAndView.addObject("tickets", tickets);
-        return modelAndView;
+    @JsonView(View.Public.class)
+    @GetMapping("{trainName}")
+    public TrainDto getTrainInfo(TrainDto trainDto){
+        return trainService.getTrainInfo(trainDto);
     }
 
-    @PostMapping(params = "trainId")
-    public String deleteTrain(@RequestParam(name = "trainId") Integer trainId) {
-        trainService.deleteTrainById(trainId);
-        return "redirect:/trains";
+    @PostMapping
+    public TrainDto addNewTrain(@Valid @RequestBody TrainDto trainDto){
+        return trainService.addNewTrain(trainDto);
     }
 
-    @PostMapping(params = {"fromStation", "toStation", "date", "seats"})
-    public String addTrain(@RequestParam(name = "fromStation") String frStat,
-                           @RequestParam(name = "toStation") String toStat,
-                           @RequestParam(name = "date") String departure,
-                           @RequestParam(name = "seats") int seats
-    ) {
-        trainService.makeNewTrain(frStat, toStat, departure, seats);
-        return "redirect:/trains";
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping
+    public ResponseEntity<Object> updateTrainStandings(@RequestBody List<TrainEdgeDto> edgeDtos){
+        trainService.updateStandings(edgeDtos);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("{trainName}")
+    public void deleteTrain(@PathVariable String trainName){
+        trainService.deleteTrainByName(trainName);
+    }
 }

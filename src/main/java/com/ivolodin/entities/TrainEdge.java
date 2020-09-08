@@ -1,6 +1,6 @@
 package com.ivolodin.entities;
 
-import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,10 +8,10 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@EqualsAndHashCode(of = {"train", "station", "seatsLeft"})
 @Entity
 @Table(name = "train_paths")
 public class TrainEdge {
@@ -23,19 +23,22 @@ public class TrainEdge {
     @ManyToOne
     private Train train;
 
-    @JoinColumn(name = "edge")
+    @JoinColumn(name = "station")
     @OneToOne
-    private StationConnect stationConnect;
+    private Station station;
 
     @Column(name = "seats_left")
     private int seatsLeft;
 
-    @Column
+    @Column(name = "departure")
+    private LocalDateTime departure;
+
+    @Column(name = "standing")
+    private int standingMinutes;
+
+    @Column(name = "arrival")
     private LocalDateTime arrival;
 
-    public TrainEdge(Train train, StationConnect stationConnect, int seatsLeft) {
-        this.train = train;
-        this.stationConnect = stationConnect;
-        this.seatsLeft = seatsLeft;
-    }
+    @Column(name = "order_in_path")
+    private Integer order;
 }

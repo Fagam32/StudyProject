@@ -1,40 +1,51 @@
 package com.ivolodin.controller;
 
-import com.ivolodin.entities.User;
-import com.ivolodin.service.UserService;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.ivolodin.dto.UserInfoDto;
+import com.ivolodin.dto.View;
+import com.ivolodin.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.validation.Valid;
+import java.util.HashMap;
 
-@Controller
-@RequestMapping("/users")
-@PreAuthorize("hasAuthority('ADMIN')")
+@RestController
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    @JsonView(View.Public.class)
     @GetMapping
-    public ModelAndView getAllUsers() {
-        ModelAndView modelAndView = new ModelAndView("users");
-        List<User> userList = userService.getAllUsers();
-        modelAndView.addObject("userList", userList);
-        return modelAndView;
+    public UserInfoDto getUserInformation(Authentication authentication) {
+        return userService.getUserInformation(authentication);
     }
 
-    @PostMapping
-    public String ModelAndView(@RequestParam("userId") Integer userId,
-                               @RequestParam(value = "admin", required = false) boolean adminRole,
-                               @RequestParam(value = "user", required = false) boolean userRole) {
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    @JsonView(View.Private.class)
+    @GetMapping(params = {"full"})
+    public UserInfoDto getUserInformation(@RequestParam Boolean full, Authentication authentication) {
+        return userService.getUserInformation(authentication);
+    }
 
-        userService.updateUserRoles(userId, adminRole, userRole);
-        return "redirect:/users";
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    @PutMapping
+    public ResponseEntity<Object> updateUserInformation(@Valid @RequestBody UserInfoDto userInfoDto,
+                                                        Authentication authentication,
+                                                        BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            HashMap<String, String> body = new HashMap<>();
+            body.put("message", bindingResult.getAllErrors().get(0).getDefaultMessage());
+            return ResponseEntity.badRequest().body(body);
+        }
+        userService.updateUserInformation(userInfoDto, authentication);
+        return ResponseEntity.ok().build();
     }
 }

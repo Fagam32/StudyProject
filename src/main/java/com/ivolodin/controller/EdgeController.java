@@ -1,46 +1,43 @@
 package com.ivolodin.controller;
 
-import com.ivolodin.entities.StationConnect;
-import com.ivolodin.model.EdgeForm;
-import com.ivolodin.service.StationService;
+import com.ivolodin.dto.StationConnectDto;
+import com.ivolodin.services.EdgeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
-@Controller
+@CrossOrigin
+@RestController
 @RequestMapping("/edges")
 public class EdgeController {
 
     @Autowired
-    private StationService stationService;
+    private EdgeService edgeService;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
-    public ModelAndView getAllEdges() {
-        ModelAndView modelAndView = new ModelAndView("edges");
-        List<StationConnect> allEdges = stationService.getAllEdges();
-        modelAndView.addObject("edges", allEdges);
-        return modelAndView;
+    public List<StationConnectDto> getAllConnects() {
+        return edgeService.getAll();
     }
 
-    @PostMapping(params = "edgeId")
-    public String deleteEdge(@RequestParam Integer edgeId) {
-        stationService.deleteEdge(edgeId);
-        return "redirect:/edges";
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping
+    public StationConnectDto addNewConnect(@Valid @RequestBody StationConnectDto scDto) {
+        return edgeService.addNewEdge(scDto);
     }
 
-    @PostMapping(params = {"fromStation", "toStation", "distance"})
-    public String addEdge(@Valid EdgeForm edgeForm, BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
-            return "redirect:/edges";
-        stationService.addEdge(edgeForm);
-        return "redirect:/edges";
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping
+    public StationConnectDto editConnect(@Valid @RequestBody StationConnectDto newSc) {
+        return edgeService.update(newSc);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("{fromStation}/{toStation}")
+    public void deleteConnect(@Valid StationConnectDto sc) {
+        edgeService.removeEdge(sc);
     }
 }

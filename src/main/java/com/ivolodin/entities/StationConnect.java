@@ -1,18 +1,19 @@
 package com.ivolodin.entities;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
+@EqualsAndHashCode
 @Entity
 @Table(name = "station_connects")
 public class StationConnect {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -25,12 +26,7 @@ public class StationConnect {
     @JoinColumn(name = "to_station")
     private Station to;
 
-    @Column(name = "distance_in_minutes")
-    private long distanceInMinutes;
+    @Column
+    private Integer distanceInMinutes;
 
-    public StationConnect(Station from, Station to, long distance) {
-        this.from = from;
-        this.to = to;
-        this.distanceInMinutes = distance;
-    }
 }
