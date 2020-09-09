@@ -24,16 +24,13 @@ import java.util.List;
 @Service
 public class EdgeService {
 
-    @Autowired
+
     private StationRepository stationRepository;
 
-    @Autowired
     private EdgeRepository edgeRepository;
 
-    @Autowired
     private TrainRepository trainRepository;
 
-    @Autowired
     private GraphService graphService;
 
     private TrainService trainService;
@@ -144,6 +141,26 @@ public class EdgeService {
 
     public Integer getDistanceBetweenStations(Station fr, Station to) {
         return edgeRepository.findByFromAndTo(fr, to).getDistanceInMinutes();
+    }
+
+    @Autowired
+    public void setStationRepository(StationRepository stationRepository) {
+        this.stationRepository = stationRepository;
+    }
+
+    @Autowired
+    public void setEdgeRepository(EdgeRepository edgeRepository) {
+        this.edgeRepository = edgeRepository;
+    }
+
+    @Autowired
+    public void setTrainRepository(TrainRepository trainRepository) {
+        this.trainRepository = trainRepository;
+    }
+
+    @Autowired
+    public void setGraphService(GraphService graphService) {
+        this.graphService = graphService;
     }
 
     @Autowired

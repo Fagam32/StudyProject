@@ -16,12 +16,11 @@ import java.util.List;
 @Service
 @Transactional
 public class StationService {
-    @Autowired
+
     private StationRepository stationRepository;
 
-    @Autowired
     private TrainEdgeRepository trainEdgeRepository;
-    @Autowired
+
     private GraphService graphService;
 
     public List<StationDto> getAllStations() {
@@ -29,12 +28,26 @@ public class StationService {
         return MapperUtils.mapAll(allStations, StationDto.class);
     }
 
+    public StationDto addStation(String stationName) {
+        stationName = stationName.trim();
+
+        if (stationName.length() < 3)
+            throw new IllegalArgumentException("Station should contain at least 3 symbols");
+
+        if (stationRepository.existsByName(stationName))
+            throw new IllegalArgumentException("Station with such name already exists");
+
+        Station station = new Station(stationName);
+
+        stationRepository.save(station);
+        graphService.addVertex(station);
+        StationDto stationDto = MapperUtils.map(station, StationDto.class);
+        log.info("Station {} added", stationDto.toString());
+        return stationDto;
+    }
+
     public StationDto addStation(StationDto newSt) {
-        Station stEntity = MapperUtils.map(newSt, Station.class);
-        stationRepository.save(stEntity);
-        graphService.addVertex(stEntity);
-        log.info("Station {} added", newSt.toString());
-        return newSt;
+        return addStation(newSt.getName());
     }
 
     public StationDto updateStation(StationDto oldSt, StationDto newSt) {
@@ -61,4 +74,18 @@ public class StationService {
         return MapperUtils.mapAll(stationList, StationDto.class);
     }
 
+    @Autowired
+    public void setStationRepository(StationRepository stationRepository) {
+        this.stationRepository = stationRepository;
+    }
+
+    @Autowired
+    public void setTrainEdgeRepository(TrainEdgeRepository trainEdgeRepository) {
+        this.trainEdgeRepository = trainEdgeRepository;
+    }
+
+    @Autowired
+    public void setGraphService(GraphService graphService) {
+        this.graphService = graphService;
+    }
 }

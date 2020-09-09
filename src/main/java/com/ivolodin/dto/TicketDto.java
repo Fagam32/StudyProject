@@ -14,8 +14,10 @@ public class TicketDto {
 
     @JsonView(View.Private.class)
     private String name;
+
     @JsonView(View.Private.class)
     private String surname;
+
     @JsonView(View.Private.class)
     private LocalDate birthdate;
 

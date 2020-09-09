@@ -31,16 +31,12 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
-    @Autowired
     private UserRepository userRepository;
 
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
     private JwtUtils jwtUtils;
 
     @Transactional
@@ -107,5 +103,25 @@ public class UserService {
         if (user == null)
             throw new EntityNotFoundException("User not found");
         return user;
+    }
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Autowired
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
+    @Autowired
+    public void setJwtUtils(JwtUtils jwtUtils) {
+        this.jwtUtils = jwtUtils;
     }
 }

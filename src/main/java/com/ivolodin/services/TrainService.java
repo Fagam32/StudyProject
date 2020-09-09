@@ -29,22 +29,17 @@ import java.util.List;
 @Transactional
 @Service
 public class TrainService {
-    @Autowired
+
     private TrainRepository trainRepository;
 
-    @Autowired
     private StationRepository stationRepository;
 
-    @Autowired
     private GraphService graphService;
 
-    @Autowired
     private EdgeService edgeService;
 
-    @Autowired
     private TrainEdgeRepository trainEdgeRepository;
 
-    @Autowired
     private AmqpTemplate template;
 
     public List<TrainDto> getAllTrains() {
@@ -71,6 +66,9 @@ public class TrainService {
         if (trainDto.getDeparture().isBefore(LocalDateTime.now()))
             throw new DateTimeException("Train departure can't be in past");
 
+        if (trainDto.getSeatsNumber() == null || trainDto.getSeatsNumber() <= 0)
+            throw new IllegalArgumentException("Seats number must be more 0");
+
         Train train = new Train();
         train.setTrainName(trainDto.getTrainName());
         train.setDeparture(trainDto.getDeparture());
@@ -79,13 +77,18 @@ public class TrainService {
         train.setToStation(toStation);
         trainRepository.save(train);
 
-        createPathForTrain(train);
+        List<TrainEdge> path = createPathForTrain(train);
+
+        train.setPath(path);
+        train.setArrival(path.get(path.size() - 1).getArrival());
+        train = trainRepository.save(train);
+
         sendRefreshMessageToTableau(train);
-        log.info("Train {} added", train);
+        log.info("Train {} added", train.toString());
         return MapperUtils.map(train, TrainDto.class);
     }
 
-    private void createPathForTrain(Train train) throws PathNotExistException {
+    private List<TrainEdge> createPathForTrain(Train train) throws PathNotExistException {
 
         List<Station> stationList = graphService.getPathList(train.getFromStation(), train.getToStation());
 
@@ -125,14 +128,7 @@ public class TrainService {
         TrainEdge lastEdge = path.get(path.size() - 1);
         lastEdge.setDeparture(null);
         lastEdge.setStandingMinutes(0);
-
-        trainEdgeRepository.saveAll(path);
-
-        train.setArrival(lastEdge.getArrival());
-
-        trainRepository.save(train);
-
-        sendRefreshMessageToTableau(train);
+        return path;
     }
 
     public TrainDto getTrainInfo(TrainDto trainDto) {
@@ -344,5 +340,35 @@ public class TrainService {
         if (frEdge == null || toEdge == null)
             throw new IllegalArgumentException("No edges with such name found: " + fromStation + " and " + toStation);
         updateSeatsForTrain(train, frEdge, toEdge, val);
+    }
+
+    @Autowired
+    public void setTrainRepository(TrainRepository trainRepository) {
+        this.trainRepository = trainRepository;
+    }
+
+    @Autowired
+    public void setStationRepository(StationRepository stationRepository) {
+        this.stationRepository = stationRepository;
+    }
+
+    @Autowired
+    public void setGraphService(GraphService graphService) {
+        this.graphService = graphService;
+    }
+
+    @Autowired
+    public void setEdgeService(EdgeService edgeService) {
+        this.edgeService = edgeService;
+    }
+
+    @Autowired
+    public void setTrainEdgeRepository(TrainEdgeRepository trainEdgeRepository) {
+        this.trainEdgeRepository = trainEdgeRepository;
+    }
+
+    @Autowired
+    public void setTemplate(AmqpTemplate template) {
+        this.template = template;
     }
 }

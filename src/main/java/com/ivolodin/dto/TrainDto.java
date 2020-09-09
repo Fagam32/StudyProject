@@ -1,17 +1,24 @@
 package com.ivolodin.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class TrainDto{
+@NoArgsConstructor
+@AllArgsConstructor
+public class TrainDto {
 
     @JsonView(View.Public.class)
     @NotBlank
@@ -33,6 +40,7 @@ public class TrainDto{
 
     @JsonView(View.Public.class)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @PastOrPresent
     private LocalDateTime departure;
 
     @JsonView(View.Public.class)

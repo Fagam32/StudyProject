@@ -10,4 +10,6 @@ public interface StationRepository extends JpaRepository<Station, Integer> {
     Station findByName(String name);
 
     List<Station> findByNameContaining(String stationName);
+
+    Boolean existsByName(String stationName);
 }

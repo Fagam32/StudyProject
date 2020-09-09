@@ -1,13 +1,17 @@
 package com.ivolodin.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TrainEdgeDto {
 
     @JsonView(View.Public.class)
@@ -24,7 +28,7 @@ public class TrainEdgeDto {
 
     @JsonView(View.Public.class)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime departure;
+    private LocalDateTime arrival;
 
     @JsonView(View.Public.class)
     @PositiveOrZero
@@ -32,5 +36,6 @@ public class TrainEdgeDto {
 
     @JsonView(View.Public.class)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime arrival;
+    private LocalDateTime departure;
+
 }
