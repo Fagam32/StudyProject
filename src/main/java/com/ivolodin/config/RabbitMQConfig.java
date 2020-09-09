@@ -16,7 +16,6 @@ public class RabbitMQConfig {
     public ConnectionFactory connectionFactory(){
         return new CachingConnectionFactory("localhost");
     }
-
     @Bean
     public AmqpAdmin amqpAdmin(){
         return new RabbitAdmin(connectionFactory());

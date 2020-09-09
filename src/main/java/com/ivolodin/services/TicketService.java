@@ -5,7 +5,6 @@ import com.ivolodin.entities.*;
 import com.ivolodin.repositories.StationRepository;
 import com.ivolodin.repositories.TicketRepository;
 import com.ivolodin.repositories.TrainRepository;
-import com.ivolodin.repositories.UserRepository;
 import com.ivolodin.utils.MapperUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,24 +17,20 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 @Slf4j
 @Transactional
 @Service
 public class TicketService {
 
-    @Autowired
     private TrainService trainService;
 
-    @Autowired
     private TrainRepository trainRepository;
 
-    @Autowired
     private StationRepository stationRepository;
 
-    @Autowired
     private TicketRepository ticketRepository;
 
-    @Autowired
     private UserService userService;
 
     public void buyTicket(TicketDto ticketDto, Authentication authentication) {
@@ -134,5 +129,30 @@ public class TicketService {
         if (train == null)
             return new ArrayList<>();
         return MapperUtils.mapAll(train.getTickets(), TicketDto.class);
+    }
+
+    @Autowired
+    public void setTrainService(TrainService trainService) {
+        this.trainService = trainService;
+    }
+
+    @Autowired
+    public void setTrainRepository(TrainRepository trainRepository) {
+        this.trainRepository = trainRepository;
+    }
+
+    @Autowired
+    public void setStationRepository(StationRepository stationRepository) {
+        this.stationRepository = stationRepository;
+    }
+
+    @Autowired
+    public void setTicketRepository(TicketRepository ticketRepository) {
+        this.ticketRepository = ticketRepository;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 }

@@ -14,7 +14,6 @@ public class JwtUtils {
 
     private static final String jwtSecret = "super_secret_key";
 
-
     public String generateToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 

@@ -10,6 +10,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @EqualsAndHashCode(exclude = {"tickets", "path"})
 @Entity
 @Table(name = "trains")
@@ -40,7 +41,7 @@ public class Train {
     private LocalDateTime arrival;
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train")
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train", cascade = CascadeType.PERSIST)
     private Set<Ticket> tickets;
 
     @ToString.Exclude
