@@ -33,6 +33,11 @@ public class TicketService {
 
     private UserService userService;
 
+    /**
+     * @param ticketDto      valid ticketDto with train name, from station and to station
+     * @param authentication authentication containing information about user authentication
+     * @throws EntityNotFoundException if any of train or stations doesn't not exists
+     */
     public void buyTicket(TicketDto ticketDto, Authentication authentication) {
         Train train = trainRepository.findTrainByTrainName(ticketDto.getTrainName());
         Station frSt = stationRepository.findByName(ticketDto.getFromStation());
@@ -73,6 +78,13 @@ public class TicketService {
         log.info("Ticket {} is bought", ticket);
     }
 
+    /**
+     * Checks if user has already bought ticket for given train
+     *
+     * @param train train to check
+     * @param user  user to check
+     * @throws IllegalArgumentException if such ticket is found
+     */
     private void checkUserTickets(Train train, User user) {
         Set<Ticket> tickets = train.getTickets();
         for (Ticket trainTicket : tickets) {
@@ -81,6 +93,13 @@ public class TicketService {
         }
     }
 
+    /**
+     * Looks for TrainEdge in given TrainPath, starting from end
+     *
+     * @param path        list of TrainEdge from train
+     * @param stationName station to find
+     * @return found TrainEdge or null
+     */
     private TrainEdge getArrivalStation(List<TrainEdge> path, String stationName) {
         //looking from end
         for (int i = path.size() - 1; i >= 0; i--) {
@@ -91,6 +110,13 @@ public class TicketService {
         return null;
     }
 
+    /**
+     * Looks for TrainEdge in given TrainPath, starting from beginning
+     *
+     * @param path        list of TrainEdge from train
+     * @param stationName station to find
+     * @return found TrainEdge or null
+     */
     private TrainEdge getDepartingStation(List<TrainEdge> path, String stationName) {
         for (TrainEdge edge : path) {
             if (edge.getStation().getName().equals(stationName))
@@ -99,12 +125,24 @@ public class TicketService {
         return null;
     }
 
+    /**
+     * Returns user's tickets from authentication
+     *
+     * @param authentication authentication containing information about user authentication
+     * @return list of TicketDto
+     */
     public List<TicketDto> getUsersTickets(Authentication authentication) {
         User user = userService.getUserFromAuthentication(authentication);
         return MapperUtils.mapAll(user.getTickets(), TicketDto.class);
     }
 
 
+    /**
+     * Deletes ticket from database and updates available tickets train paths
+     *
+     * @param ticketDto      ticket to delete
+     * @param authentication authentication containing information about user authentication
+     */
     public void cancelTicket(TicketDto ticketDto, Authentication authentication) {
         User user = userService.getUserFromAuthentication(authentication);
         for (Ticket ticket : user.getTickets()) {
@@ -124,6 +162,12 @@ public class TicketService {
         trainService.updateSeatsForTrain(train, ticketDto.getFromStation(), ticketDto.getToStation(), 1);
     }
 
+    /**
+     * Returns all tickets for given train, if such train exists
+     *
+     * @param trainName name of train
+     * @return list of ticketDto
+     */
     public List<TicketDto> getTrainTickets(String trainName) {
         Train train = trainRepository.findTrainByTrainName(trainName);
         if (train == null)

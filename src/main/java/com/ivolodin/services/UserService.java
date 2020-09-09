@@ -39,6 +39,12 @@ public class UserService {
 
     private JwtUtils jwtUtils;
 
+    /**
+     * Registers new user
+     *
+     * @param registrationDto valid registrationDto
+     * @throws IllegalArgumentException if email or username have already been taken
+     */
     @Transactional
     public void register(RegistrationDto registrationDto) {
         registrationDto.optimize();
@@ -63,6 +69,10 @@ public class UserService {
         log.info("User {} registered", user.toString());
     }
 
+    /**
+     * @param loginDto containing login and password
+     * @return dto containing roles and Json Web Token
+     */
     public PrincipalDto login(LoginDto loginDto) {
 
         Authentication authentication = authenticationManager.authenticate(
@@ -83,11 +93,24 @@ public class UserService {
         return principalDto;
     }
 
+    /**
+     * Returns user information
+     *
+     * @param authentication authentication containing information about user authentication
+     * @return user information
+     */
     public UserInfoDto getUserInformation(Authentication authentication) {
         User user = getUserFromAuthentication(authentication);
         return MapperUtils.map(user, UserInfoDto.class);
     }
 
+    /**
+     * Updates user information
+     *
+     * @param userInfoDto    new information
+     * @param authentication authentication containing information about user authentication
+     */
+    @Transactional
     public void updateUserInformation(UserInfoDto userInfoDto, Authentication authentication) {
         User user = getUserFromAuthentication(authentication);
         user.setName(userInfoDto.getName());
@@ -97,6 +120,10 @@ public class UserService {
         userRepository.save(user);
     }
 
+    /**
+     * @param authentication authentication containing information about user authentication
+     * @return User entity
+     */
     public User getUserFromAuthentication(Authentication authentication) {
         String username = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
         User user = userRepository.findByUsername(username);

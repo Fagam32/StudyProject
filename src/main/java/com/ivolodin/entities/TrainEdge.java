@@ -1,13 +1,10 @@
 package com.ivolodin.entities;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -30,14 +27,15 @@ public class TrainEdge {
     @Column(name = "seats_left")
     private int seatsLeft;
 
-    @Column(name = "departure")
-    private LocalDateTime departure;
+    @Column(name = "arrival")
+    private LocalDateTime arrival;
 
     @Column(name = "standing")
     private int standingMinutes;
 
-    @Column(name = "arrival")
-    private LocalDateTime arrival;
+    @Column(name = "departure")
+    private LocalDateTime departure;
+
 
     @Column(name = "order_in_path")
     private Integer order;

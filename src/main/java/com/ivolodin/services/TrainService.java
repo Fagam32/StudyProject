@@ -42,11 +42,20 @@ public class TrainService {
 
     private AmqpTemplate template;
 
+    /**
+     * @return list of all trains
+     */
     public List<TrainDto> getAllTrains() {
         List<Train> all = trainRepository.findAll();
         return MapperUtils.mapAll(all, TrainDto.class);
     }
 
+    /**
+     * Creates new train from given data. Creates path
+     *
+     * @param trainDto containing trainName, departing time, total seats, from and to stations
+     * @return TrainDto containing information about resulting train
+     */
     public TrainDto addNewTrain(TrainDto trainDto) {
         Station fromStation = stationRepository.findByName(trainDto.getFromStation());
         Station toStation = stationRepository.findByName(trainDto.getToStation());
@@ -88,6 +97,14 @@ public class TrainService {
         return MapperUtils.map(train, TrainDto.class);
     }
 
+    /**
+     * Creates path for given train using graph service.
+     * Default standing is 0 minutes
+     *
+     * @param train containing train name, from and to stations, total seats and departing time
+     * @return list of TrainEdge
+     * @throws PathNotExistException if path does not exist
+     */
     private List<TrainEdge> createPathForTrain(Train train) throws PathNotExistException {
 
         List<Station> stationList = graphService.getPathList(train.getFromStation(), train.getToStation());
@@ -139,6 +156,11 @@ public class TrainService {
         return MapperUtils.map(train, TrainDto.class);
     }
 
+    /**
+     * Sets standings on trainEdge path from given list of trainEdgeDto
+     *
+     * @param stationUpdates list of TrainEdgeDto containing new standings
+     */
     public void updateStandings(List<TrainEdgeDto> stationUpdates) {
         Train train = trainRepository.findTrainByTrainName(stationUpdates.get(0).getTrainName());
         if (train == null)
@@ -157,6 +179,11 @@ public class TrainService {
         refreshTrainTimes(train);
     }
 
+    /**
+     * Refreshes train times, depending on it's current path and current standings and saves them to database
+     *
+     * @param train train to update
+     */
     public void refreshTrainTimes(Train train) {
         List<TrainEdge> path = train.getPath();
 
@@ -180,6 +207,11 @@ public class TrainService {
         log.info("Train {} updated", train.getTrainName());
     }
 
+    /**
+     * @param stationName station name
+     * @param date        date
+     * @return list of TrainDto passing through this station on given date
+     */
     public List<TrainDto> getAllTrainsOnStation(String stationName, LocalDate date) {
         if (date == null)
             date = LocalDate.now();
@@ -191,10 +223,20 @@ public class TrainService {
         return MapperUtils.mapAll(trains, TrainDto.class);
     }
 
+    /**
+     * @param station station dto
+     * @param date    date
+     * @return list of TrainDto departing from given station on given date
+     */
     public List<TrainDto> getTrainsDepartingFromStation(StationDto station, LocalDate date) {
         return getTrainsDepartingFromStation(station.getName(), date);
     }
 
+    /**
+     * @param stationName station name
+     * @param date        date
+     * @return list of TrainDto departing from given station on given date
+     */
     public List<TrainDto> getTrainsDepartingFromStation(String stationName, LocalDate date) {
         if (date.isBefore(LocalDate.now()))
             throw new IllegalArgumentException("Date is in past");
@@ -205,15 +247,31 @@ public class TrainService {
 
     }
 
-    public List<TrainDto> getTrainsInDate(String from, String to, LocalDate localDate) {
+    /**
+     * Returns trains passing from one station to another on given date
+     *
+     * @param from from station name
+     * @param to   to station name
+     * @param date date
+     * @return list of train dto
+     */
+    public List<TrainDto> getTrainsInDate(String from, String to, LocalDate date) {
         StationDto frSt = new StationDto();
         frSt.setName(from);
         StationDto toSt = new StationDto();
         toSt.setName(to);
-        return getTrainsInDate(frSt, toSt, localDate);
+        return getTrainsInDate(frSt, toSt, date);
 
     }
 
+    /**
+     * Returns trains passing from one station to another on given date
+     *
+     * @param from stationDto containing station name
+     * @param to   stationDto containing station name
+     * @param date date
+     * @return list of train dto
+     */
     public List<TrainDto> getTrainsInDate(StationDto from, StationDto to, LocalDate date) {
         List<TrainDto> trainsOnFromStation = getTrainsDepartingFromStation(from, date);
         List<TrainDto> foundTrains = new ArrayList<>();
@@ -240,6 +298,14 @@ public class TrainService {
         return foundTrains;
     }
 
+    /**
+     * Returns true if train has available seats on current piece of path
+     *
+     * @param train    train
+     * @param fromEdge from Edge
+     * @param toEdge   to Edge
+     * @return true if train has available seats on current piece of path
+     */
     public Boolean hasAvailableSeatsOnPath(Train train, TrainEdge fromEdge, TrainEdge toEdge) {
         if (!fromEdge.getTrain().equals(train) || !toEdge.getTrain().equals(train))
             return false;
@@ -295,6 +361,30 @@ public class TrainService {
         trainRepository.save(train);
     }
 
+    /**
+     * Updates available seats for train between fromStation and toStation.
+     * If val > 0 method adds available seats, else reduces
+     *
+     * @param train       the train needed to be updated
+     * @param fromStation Starting edge to update
+     * @param toStation   Ending edge to update
+     * @param val         Value to add/reduce to available seats
+     */
+    public void updateSeatsForTrain(Train train, String fromStation, String toStation, int val) {
+
+        TrainEdge frEdge = trainEdgeRepository.getTrainEdgeByStationNameAndTrain(fromStation, train);
+        TrainEdge toEdge = trainEdgeRepository.getTrainEdgeByStationNameAndTrain(toStation, train);
+        if (frEdge == null || toEdge == null)
+            throw new IllegalArgumentException("No edges with such name found: " + fromStation + " and " + toStation);
+        updateSeatsForTrain(train, frEdge, toEdge, val);
+    }
+
+    /**
+     * Sends message to RabbitMQ containing all station names
+     * on train path, which must update their tableau
+     *
+     * @param train train
+     */
     private void sendRefreshMessageToTableau(Train train) {
         StringBuilder sb = new StringBuilder();
         List<TrainEdge> trainPath = trainEdgeRepository.getTrainPath(train);
@@ -311,6 +401,11 @@ public class TrainService {
         log.info("Message {} is sent to RabbitMQ", sb.toString());
     }
 
+    /**
+     * Sends message to RabbitMQ containing station names from given list
+     *
+     * @param stationNames list of station names
+     */
     private void sendRefreshMessageToTableau(List<String> stationNames) {
         StringBuilder sb = new StringBuilder();
         stationNames.forEach(x -> sb.append(x).append('/'));
@@ -319,7 +414,12 @@ public class TrainService {
         log.info("Message {} is sent to RabbitMQ", sb.toString());
     }
 
-    //N+1 problem here
+
+    /**
+     * Deletes train, train path and tickets from database
+     *
+     * @param trainName train name
+     */
     public void deleteTrainByName(String trainName) {
         Train train = trainRepository.findTrainByTrainName(trainName);
         if (train == null)
@@ -331,15 +431,6 @@ public class TrainService {
 
         sendRefreshMessageToTableau(stations);
         log.info("Train {} deleted", trainName);
-    }
-
-    public void updateSeatsForTrain(Train train, String fromStation, String toStation, int val) {
-
-        TrainEdge frEdge = trainEdgeRepository.getTrainEdgeByStationNameAndTrain(fromStation, train);
-        TrainEdge toEdge = trainEdgeRepository.getTrainEdgeByStationNameAndTrain(toStation, train);
-        if (frEdge == null || toEdge == null)
-            throw new IllegalArgumentException("No edges with such name found: " + fromStation + " and " + toStation);
-        updateSeatsForTrain(train, frEdge, toEdge, val);
     }
 
     @Autowired

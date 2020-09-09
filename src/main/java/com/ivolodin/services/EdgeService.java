@@ -35,11 +35,17 @@ public class EdgeService {
 
     private TrainService trainService;
 
+    /**
+     * Adds new {@link StationConnect} between from and to stations to database and graph
+     *
+     * @param newSc the {@link StationConnectDto} containing from and to stations and distance between them
+     * @return the {@link StationConnectDto} of newly added connect
+     */
     public StationConnectDto addNewEdge(StationConnectDto newSc) {
+        checkStationsExist(newSc);
+
         Station frSt = stationRepository.findByName(newSc.getFromStation());
         Station toSt = stationRepository.findByName(newSc.getToStation());
-
-        checkConnectExisting(newSc, frSt, toSt);
         graphService.addEdge(frSt, toSt, newSc.getDistance());
 
         StationConnect scEntity = new StationConnect();
@@ -52,12 +58,18 @@ public class EdgeService {
         return MapperUtils.map(saved, StationConnectDto.class);
     }
 
+    /**
+     * Removes connect between from and to stations from database and graph
+     *
+     * @param sc the {@link StationConnectDto} containing from and to stations
+     */
     public void removeEdge(StationConnectDto sc) {
+
+
+        checkStationsExist(sc);
 
         Station frSt = stationRepository.findByName(sc.getFromStation());
         Station toSt = stationRepository.findByName(sc.getToStation());
-
-        checkConnectExisting(sc, frSt, toSt);
 
         checkIfTrainsPassingThrough(frSt, toSt);
 
@@ -67,6 +79,13 @@ public class EdgeService {
         log.info("Edge {} deleted", sc.toString());
     }
 
+    /**
+     * Checks is there any trains passing through these stations
+     *
+     * @param frSt the {@link Station} from
+     * @param toSt the {@link Station} to
+     * @throws IllegalArgumentException if there's at least one train passing through edge
+     */
     private void checkIfTrainsPassingThrough(Station frSt, Station toSt) {
         HashSet<Train> trainsFrom = new HashSet<>(trainRepository.findTrainsPassingThroughStation(frSt));
         HashSet<Train> trainsTo = new HashSet<>(trainRepository.findTrainsPassingThroughStation(toSt));
@@ -86,15 +105,24 @@ public class EdgeService {
         }
     }
 
+    /**
+     * @return List of all edges between stations
+     */
     public List<StationConnectDto> getAll() {
         return MapperUtils.mapAll(edgeRepository.findAll(), StationConnectDto.class);
     }
 
+    /**
+     * Updates existing connect between two stations and updates train times, passing through this edge
+     *
+     * @param newSc the {@link StationConnectDto} with new distance
+     * @return updated {@link StationConnectDto}
+     */
     public StationConnectDto update(StationConnectDto newSc) {
+        checkStationsExist(newSc);
+
         Station frSt = stationRepository.findByName(newSc.getFromStation());
         Station toSt = stationRepository.findByName(newSc.getToStation());
-
-        checkConnectExisting(newSc, frSt, toSt);
 
         StationConnect connect = edgeRepository.findByFromAndTo(frSt, toSt);
         connect.setDistanceInMinutes(newSc.getDistance());
@@ -126,19 +154,38 @@ public class EdgeService {
         return MapperUtils.map(connect, StationConnectDto.class);
     }
 
+    /**
+     * Returns {@link StationConnect} between two stations
+     *
+     * @param fr {@link Station} from station
+     * @param to {@link Station} to station
+     * @return {@link StationConnect} entity
+     */
     public StationConnect getStationConnect(Station fr, Station to) {
         return edgeRepository.findByFromAndTo(fr, to);
     }
 
-    private void checkConnectExisting(StationConnectDto newSc, Station frSt, Station toSt) {
-        if (frSt == null || toSt == null) {
-            if (frSt == null)
-                throw new EntityNotFoundException("Station with name " + newSc.getFromStation() + " not found");
-            else
-                throw new EntityNotFoundException("Station with name " + newSc.getToStation() + " not found");
-        }
+    /**
+     * Check if stations from {@link StationConnectDto} exist
+     *
+     * @param newSc the {@link StationConnectDto}
+     */
+    private void checkStationsExist(StationConnectDto newSc) {
+        if (stationRepository.existsByName(newSc.getFromStation()))
+            throw new EntityNotFoundException("Station with name " + newSc.getFromStation() + " not found");
+        if (stationRepository.existsByName(newSc.getToStation()))
+            throw new EntityNotFoundException("Station with name " + newSc.getToStation() + " not found");
+
     }
 
+
+    /**
+     * Get distance between stations
+     *
+     * @param fr {@link Station} from
+     * @param to {@link Station} to
+     * @return distance or null
+     */
     public Integer getDistanceBetweenStations(Station fr, Station to) {
         return edgeRepository.findByFromAndTo(fr, to).getDistanceInMinutes();
     }

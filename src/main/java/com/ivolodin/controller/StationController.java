@@ -50,6 +50,7 @@ public class StationController {
         stationService.remove(station);
     }
 
+
     @GetMapping(params = {"name"})
     public List<StationDto> searchByName(@RequestParam("name") String stationName) {
         return stationService.getStationsByName(stationName);
