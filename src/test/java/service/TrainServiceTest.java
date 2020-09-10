@@ -2,8 +2,9 @@ package service;
 
 import com.ivolodin.TrainStationApp;
 import com.ivolodin.dto.TrainDto;
-import com.ivolodin.dto.TrainEdgeDto;
 import com.ivolodin.entities.Station;
+import com.ivolodin.entities.Train;
+import com.ivolodin.entities.TrainEdge;
 import com.ivolodin.repositories.StationRepository;
 import com.ivolodin.repositories.TrainEdgeRepository;
 import com.ivolodin.repositories.TrainRepository;
@@ -15,26 +16,30 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import utils.TestUtils;
 
+import javax.persistence.EntityNotFoundException;
+import java.sql.Date;
+import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+import static utils.TestUtils.*;
 
-@ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = TrainStationApp.class)
 public class TrainServiceTest {
 
-    private static final String TRAIN_NAME = "Valid";
+    private static final String TRAIN_NAME = TestUtils.TRAIN_NAME;
 
-    private static final LocalDateTime DEPARTING_TIME = LocalDateTime.now();
+    private static final LocalDateTime DEPARTING_TIME = TestUtils.DEPARTING_TIME;
 
     @Autowired
     private TrainService trainService;
@@ -55,7 +60,7 @@ public class TrainServiceTest {
     private TrainEdgeRepository trainEdgeRepository;
 
     @Test
-    public void addValidTrain() {
+    public void addNewTrain() {
         ArrayList<Station> validTrainPath = new ArrayList<>();
 
         Station first = new Station("First");
@@ -65,11 +70,11 @@ public class TrainServiceTest {
         validTrainPath.add(first);
         validTrainPath.add(second);
         validTrainPath.add(third);
-        TrainDto validTrain = getValidTrainWithoutPath();
+        TrainDto validTrain = getValidTrainDtoWithoutPath();
 
-        when(stationRepository.findByName("First")).thenReturn(first);
-        when(stationRepository.findByName("Third")).thenReturn(third);
-        when(trainRepository.findTrainByTrainName(TRAIN_NAME)).thenReturn(null);
+        when(stationRepository.findByName(eq("First"))).thenReturn(first);
+        when(stationRepository.findByName(eq("Third"))).thenReturn(third);
+        when(trainRepository.findTrainByTrainName(eq(TRAIN_NAME))).thenReturn(null);
         when(graphService.getPathList(first, third)).thenReturn(validTrainPath);
         when(edgeService.getDistanceBetweenStations(first, second)).thenReturn(10);
         when(edgeService.getDistanceBetweenStations(second, third)).thenReturn(10);
@@ -78,59 +83,142 @@ public class TrainServiceTest {
         TrainDto inputTrain = new TrainDto();
         inputTrain.setTrainName(TRAIN_NAME);
         inputTrain.setSeatsNumber(15);
-        inputTrain.setDeparture(DEPARTING_TIME.plusHours(1));
+        inputTrain.setDeparture(DEPARTING_TIME);
         inputTrain.setFromStation("First");
         inputTrain.setToStation("Third");
 
         TrainDto testingTrain = trainService.addNewTrain(inputTrain);
 
         assertEquals(testingTrain, validTrain);
+
+        TrainDto actual = new TrainDto();
+        actual.setFromStation("First");
+        assertThrows(EntityNotFoundException.class, () -> trainService.addNewTrain(actual));
+
+        actual.setToStation("First");
+        assertThrows(IllegalArgumentException.class, () -> trainService.addNewTrain(actual));
+
+        actual.setToStation("Third");
+        actual.setDeparture(DEPARTING_TIME.minusHours(2));
+        assertThrows(DateTimeException.class, () -> trainService.addNewTrain(actual));
+
+        actual.setDeparture(DEPARTING_TIME);
+        assertThrows(IllegalArgumentException.class, () -> trainService.addNewTrain(actual));
+
+        when(trainRepository.findTrainByTrainName(eq(TRAIN_NAME))).thenReturn(notNull());
+
+        assertThrows(IllegalArgumentException.class, () -> trainService.addNewTrain(actual));
     }
 
     @Test
-    public void addInvalidTrain_wrongTime(){
+    public void updateSeatsForTrain() {
+        Train train = getValidTrainEntity();
+        when(trainEdgeRepository.getTrainEdgeByStationNameAndTrain(eq("First"), any())).thenReturn(train.getPath().get(0));
+        when(trainEdgeRepository.getTrainEdgeByStationNameAndTrain(eq("Third"), any())).thenReturn(train.getPath().get(2));
+        trainService.updateSeatsForTrain(train, "First", "Third", -1);
+        TrainEdge first = train.getPath().get(0);
+        TrainEdge second = train.getPath().get(1);
+        TrainEdge third = train.getPath().get(2);
+
+        assertEquals(14, first.getSeatsLeft());
+        assertEquals(14, second.getSeatsLeft());
+        assertEquals(15, third.getSeatsLeft());
+
+        trainService.updateSeatsForTrain(train, "First", "Third", 2);
+
+        assertEquals(16, first.getSeatsLeft());
+        assertEquals(16, second.getSeatsLeft());
+        assertEquals(15, third.getSeatsLeft());
+
 
     }
 
-    private TrainDto getValidTrainWithoutPath() {
-        return new TrainDto(TRAIN_NAME,
-                15,
-                "First",
-                "Third",
-                DEPARTING_TIME.plusHours(1),
-                DEPARTING_TIME.plusHours(1).plusMinutes(10).plusMinutes(10),
-                getValidTrainPathDto());
+    @Test
+    public void hasAvailableSeatsOnPath() {
+        Train train = getValidTrainEntity();
+        Boolean answer = trainService.hasAvailableSeatsOnPath(train, train.getPath().get(0), train.getPath().get(2));
+
+        assertTrue(answer);
+
+        train.getPath().get(0).setSeatsLeft(0);
+        answer = trainService.hasAvailableSeatsOnPath(train, train.getPath().get(0), train.getPath().get(2));
+
+        assertFalse(answer);
     }
 
-    private List<TrainEdgeDto> getValidTrainPathDto() {
-        TrainEdgeDto first = new TrainEdgeDto(
-                TRAIN_NAME,
-                1,
-                "First",
-                15,
-                null,
-                0,
-                DEPARTING_TIME.plusHours(1)
-        );
-        TrainEdgeDto second = new TrainEdgeDto(
-                TRAIN_NAME,
-                2,
-                "Second",
-                15,
-                DEPARTING_TIME.plusHours(1).plusMinutes(10),
-                0,
-                DEPARTING_TIME.plusHours(1).plusMinutes(10)
-        );
-        TrainEdgeDto third = new TrainEdgeDto(
-                TRAIN_NAME,
-                3,
-                "Third",
-                15,
-                DEPARTING_TIME.plusHours(1).plusMinutes(20),
-                0,
-                null
-        );
-        return Arrays.asList(first, second, third);
+    @Test
+    public void getTrainInfo() {
+        TrainDto trainDto = new TrainDto();
+        trainDto.setTrainName(TRAIN_NAME);
+        Train trainEntity = getValidTrainEntity();
+        when(trainRepository.findTrainByTrainName(TRAIN_NAME)).thenReturn(trainEntity);
+
+        TrainDto actual = trainService.getTrainInfo(trainDto);
+        TrainDto expected = getValidTrainDtoWithoutPath();
+
+        expected.setPath(getValidPathDto());
+
+        assertEquals(actual, expected);
     }
+
+    @Test
+    public void refreshTrainTimes() {
+        Station first = new Station("First");
+        Station second = new Station("Second");
+        Station third = new Station("Third");
+
+        when(edgeService.getDistanceBetweenStations(first, second)).thenReturn(10);
+        when(edgeService.getDistanceBetweenStations(second, third)).thenReturn(10);
+
+        Train actual = getValidTrainEntity();
+        actual.getPath().get(0).setStandingMinutes(3);
+        actual.getPath().get(1).setStandingMinutes(3);
+        actual.getPath().get(2).setStandingMinutes(3);
+
+        Train expected = getValidTrainEntity();
+        expected.setArrival(DEPARTING_TIME.plusMinutes(23));
+        expected.getPath().get(1).setArrival(DEPARTING_TIME.plusMinutes(10));
+        expected.getPath().get(1).setStandingMinutes(3);
+        expected.getPath().get(1).setDeparture(DEPARTING_TIME.plusMinutes(13));
+        expected.getPath().get(2).setArrival(DEPARTING_TIME.plusMinutes(23));
+        expected.getPath().get(2).setStandingMinutes(3);
+
+        trainService.refreshTrainTimes(actual);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getTrainsDepartingFromStation() {
+
+        when(stationRepository.findByName(eq("First"))).thenReturn(new Station());
+        Train validTrainEntity = getValidTrainEntity();
+        when(trainRepository
+                .findTrainsDepartingFromStation(
+                        eq("First"),
+                        eq(Date.valueOf(DEPARTING_TIME.toLocalDate())
+                        )
+                )
+        )
+                .thenReturn(Collections.singletonList(validTrainEntity));
+
+        List<TrainDto> actual = trainService.getTrainsDepartingFromStation("First", DEPARTING_TIME.toLocalDate());
+        TrainDto train = getValidTrainDtoWithoutPath();
+        train.setPath(getValidPathDto());
+        List<TrainDto> expected = Collections.singletonList(train);
+
+        assertEquals(expected, actual);
+
+        LocalDate wrongDate = DEPARTING_TIME.minusDays(1).toLocalDate();
+        assertThrows(IllegalArgumentException.class, () -> trainService.getTrainsDepartingFromStation
+                ("Second", wrongDate));
+
+        when(stationRepository.findByName(anyString())).thenReturn(null);
+
+        LocalDate date = DEPARTING_TIME.toLocalDate();
+        String stationName = anyString();
+        assertThrows(EntityNotFoundException.class, () -> trainService.getTrainsDepartingFromStation(stationName, date));
+    }
+
 
 }

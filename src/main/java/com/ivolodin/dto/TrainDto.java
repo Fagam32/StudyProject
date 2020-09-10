@@ -2,16 +2,11 @@ package com.ivolodin.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,7 +35,7 @@ public class TrainDto {
 
     @JsonView(View.Public.class)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    @PastOrPresent
+    @FutureOrPresent
     private LocalDateTime departure;
 
     @JsonView(View.Public.class)

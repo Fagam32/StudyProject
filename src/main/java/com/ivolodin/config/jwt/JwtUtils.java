@@ -12,7 +12,7 @@ import java.util.Date;
 @Component
 public class JwtUtils {
 
-    private static final String jwtSecret = "super_secret_key";
+    private static final String JWT_SECRET = "super_secret_key";
 
     public String generateToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
@@ -21,17 +21,17 @@ public class JwtUtils {
                 .setSubject(userPrincipal.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(null)
-                .signWith(SignatureAlgorithm.HS256, jwtSecret)
+                .signWith(SignatureAlgorithm.HS256, JWT_SECRET)
                 .compact();
     }
 
     public String getUsernameFromToken(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token).getBody().getSubject();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token);
             return true;
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());

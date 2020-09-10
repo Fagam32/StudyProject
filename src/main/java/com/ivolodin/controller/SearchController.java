@@ -22,14 +22,6 @@ public class SearchController {
     private TrainService trainService;
 
 
-    /**
-     * Returns all trains passing between from and to stations
-     *
-     * @param from Station name
-     * @param to   Station name
-     * @param date Date
-     * @return List of TrainDto
-     */
     @JsonView(View.Public.class)
     @GetMapping(params = {"from", "to", "date"})
     public List<TrainDto> search(@RequestParam("from") String from,

@@ -41,10 +41,10 @@ public class Train {
     private LocalDateTime arrival;
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train", cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train")
     private Set<Ticket> tickets;
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train")
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "train", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<TrainEdge> path;
 }

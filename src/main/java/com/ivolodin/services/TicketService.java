@@ -64,6 +64,7 @@ public class TicketService {
 
         if (!trainService.hasAvailableSeatsOnPath(train, fromEdge, toEdge))
             throw new IllegalArgumentException("No available seats");
+
         Ticket ticket = new Ticket();
         ticket.setUser(user);
         ticket.setTrain(train);

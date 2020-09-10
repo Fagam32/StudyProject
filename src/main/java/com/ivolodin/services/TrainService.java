@@ -84,7 +84,6 @@ public class TrainService {
         train.setSeatsNumber(trainDto.getSeatsNumber());
         train.setFromStation(fromStation);
         train.setToStation(toStation);
-        trainRepository.save(train);
 
         List<TrainEdge> path = createPathForTrain(train);
 
@@ -166,16 +165,16 @@ public class TrainService {
         if (train == null)
             throw new EntityNotFoundException("Train with name " + stationUpdates.get(0).getTrainName() + " not found");
 
-        List<TrainEdge> trainPath = trainEdgeRepository.getTrainPath(train);
+        List<TrainEdge> path = train.getPath();
         for (TrainEdgeDto newEdge : stationUpdates) {
-            for (TrainEdge oldEdge : trainPath) {
+            for (TrainEdge oldEdge : path) {
                 if (oldEdge.getStation().getName().equals(newEdge.getStationName())) {
                     oldEdge.setStandingMinutes(newEdge.getStanding());
                     break;
                 }
             }
         }
-        trainEdgeRepository.saveAll(trainPath);
+        trainEdgeRepository.saveAll(path);
         refreshTrainTimes(train);
     }
 
