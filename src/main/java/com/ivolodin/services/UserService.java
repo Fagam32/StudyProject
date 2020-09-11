@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +40,22 @@ public class UserService {
     private AuthenticationManager authenticationManager;
 
     private JwtUtils jwtUtils;
+
+    @PostConstruct
+    public void init() {
+        User tmpAdmin = new User();
+        tmpAdmin.setUsername("first");
+        tmpAdmin.setName("Ilya");
+        tmpAdmin.setSurname("Volodin");
+        tmpAdmin.setBirthdate(LocalDate.of(1998, 8, 18));
+        HashSet<Role> roles = new HashSet<>();
+        roles.add(Role.ADMIN);
+        roles.add(Role.USER);
+        tmpAdmin.setRoles(roles);
+        tmpAdmin.setEmail("1@g.com");
+        if (userRepository.findByUsername("first") == null)
+            userRepository.save(tmpAdmin);
+    }
 
     /**
      * Registers new user
