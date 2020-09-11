@@ -48,6 +48,7 @@ public class UserService {
         tmpAdmin.setName("Ilya");
         tmpAdmin.setSurname("Volodin");
         tmpAdmin.setBirthdate(LocalDate.of(1998, 8, 18));
+        tmpAdmin.setPassword(passwordEncoder.encode("1234"));
         HashSet<Role> roles = new HashSet<>();
         roles.add(Role.ADMIN);
         roles.add(Role.USER);
