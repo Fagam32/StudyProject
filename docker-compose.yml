@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  mysql:
+    image: library/mysql:5.7.31
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: trainStationSchema
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./database:/var/lib/mysql
+
+  rabbitMq:
+    image: library/rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    expose:
+      - 5672
+      - 15672
+    ports:
+    - 5672:5672
+    - 15672:15672
+
+  backend:
+    build: .
+    expose:
+      - "8000"
+    ports:
+    - "8000:8000"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/trainStationSchema?autoReconnect=true
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - mysql
+      - rabbitMq

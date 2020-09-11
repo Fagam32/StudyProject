@@ -171,9 +171,9 @@ public class EdgeService {
      * @param newSc the {@link StationConnectDto}
      */
     private void checkStationsExist(StationConnectDto newSc) {
-        if (stationRepository.existsByName(newSc.getFromStation()))
+        if (!stationRepository.existsByName(newSc.getFromStation()))
             throw new EntityNotFoundException("Station with name " + newSc.getFromStation() + " not found");
-        if (stationRepository.existsByName(newSc.getToStation()))
+        if (!stationRepository.existsByName(newSc.getToStation()))
             throw new EntityNotFoundException("Station with name " + newSc.getToStation() + " not found");
 
     }
