@@ -5,6 +5,7 @@ Requirements:
  + Maven
  + Docker
  + Docker-compose
+ + Free localhost:8000
  
 How to run:
 
