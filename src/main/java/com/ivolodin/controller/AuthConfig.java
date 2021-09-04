@@ -1,8 +1,8 @@
 package com.ivolodin.controller;
 
-import com.ivolodin.dto.LoginDto;
-import com.ivolodin.dto.PrincipalDto;
-import com.ivolodin.dto.RegistrationDto;
+import com.ivolodin.model.dto.LoginDto;
+import com.ivolodin.model.dto.PrincipalDto;
+import com.ivolodin.model.dto.RegistrationDto;
 import com.ivolodin.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

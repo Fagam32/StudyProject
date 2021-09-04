@@ -1,10 +1,10 @@
 package com.ivolodin.services;
 
-import com.ivolodin.dto.StationConnectDto;
-import com.ivolodin.entities.Station;
-import com.ivolodin.entities.StationConnect;
-import com.ivolodin.entities.Train;
-import com.ivolodin.entities.TrainEdge;
+import com.ivolodin.model.dto.StationConnectDto;
+import com.ivolodin.model.entities.Station;
+import com.ivolodin.model.entities.StationConnect;
+import com.ivolodin.model.entities.Train;
+import com.ivolodin.model.entities.TrainEdge;
 import com.ivolodin.repositories.EdgeRepository;
 import com.ivolodin.repositories.StationRepository;
 import com.ivolodin.repositories.TrainRepository;
@@ -150,7 +150,7 @@ public class EdgeService {
 
         for (Train train : trainsToBeUpdated)
             trainService.refreshTrainTimes(train);
-        log.info("Edge {} updated", newSc.toString());
+        log.info("Edge {} updated", newSc);
         return MapperUtils.map(connect, StationConnectDto.class);
     }
 

@@ -1,11 +1,10 @@
 package service;
 
-import com.ivolodin.TrainStationApp;
-import com.ivolodin.dto.TicketDto;
-import com.ivolodin.entities.Station;
-import com.ivolodin.entities.Ticket;
-import com.ivolodin.entities.Train;
-import com.ivolodin.entities.User;
+import com.ivolodin.model.dto.TicketDto;
+import com.ivolodin.model.entities.Station;
+import com.ivolodin.model.entities.Ticket;
+import com.ivolodin.model.entities.Train;
+import com.ivolodin.model.entities.User;
 import com.ivolodin.repositories.StationRepository;
 import com.ivolodin.repositories.TicketRepository;
 import com.ivolodin.repositories.TrainRepository;
@@ -13,43 +12,41 @@ import com.ivolodin.services.GraphService;
 import com.ivolodin.services.TicketService;
 import com.ivolodin.services.TrainService;
 import com.ivolodin.services.UserService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import utils.TestUtils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = TrainStationApp.class)
+@ExtendWith(MockitoExtension.class)
 public class TicketServiceTest {
 
-    @Autowired
+    @InjectMocks
     private TicketService ticketService;
 
-    @MockBean
+    @Mock
     private TrainService trainService;
 
-    @MockBean
+    @Mock
     private TrainRepository trainRepository;
 
-    @MockBean
+    @Mock
     private StationRepository stationRepository;
 
-    @MockBean
+    @Mock
     private TicketRepository ticketRepository;
 
-    @MockBean
+    @Mock
     private GraphService graphService;
 
-    @MockBean
+    @Mock
     private UserService userService;
 
 

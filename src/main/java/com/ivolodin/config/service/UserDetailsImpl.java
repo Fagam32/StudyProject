@@ -1,7 +1,7 @@
 package com.ivolodin.config.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ivolodin.entities.User;
+import com.ivolodin.model.entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

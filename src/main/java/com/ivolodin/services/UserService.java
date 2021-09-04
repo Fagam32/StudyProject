@@ -2,12 +2,12 @@ package com.ivolodin.services;
 
 import com.ivolodin.config.jwt.JwtUtils;
 import com.ivolodin.config.service.UserDetailsImpl;
-import com.ivolodin.dto.LoginDto;
-import com.ivolodin.dto.PrincipalDto;
-import com.ivolodin.dto.RegistrationDto;
-import com.ivolodin.dto.UserInfoDto;
-import com.ivolodin.entities.Role;
-import com.ivolodin.entities.User;
+import com.ivolodin.model.dto.LoginDto;
+import com.ivolodin.model.dto.PrincipalDto;
+import com.ivolodin.model.dto.RegistrationDto;
+import com.ivolodin.model.dto.UserInfoDto;
+import com.ivolodin.model.entities.Role;
+import com.ivolodin.model.entities.User;
 import com.ivolodin.repositories.UserRepository;
 import com.ivolodin.utils.MapperUtils;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,6 @@
 package com.ivolodin.config.service;
 
-import com.ivolodin.entities.User;
+import com.ivolodin.model.entities.User;
 import com.ivolodin.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,7 +1,7 @@
 package com.ivolodin.services;
 
-import com.ivolodin.entities.Station;
-import com.ivolodin.entities.StationConnect;
+import com.ivolodin.model.entities.Station;
+import com.ivolodin.model.entities.StationConnect;
 import com.ivolodin.repositories.EdgeRepository;
 import com.ivolodin.repositories.StationRepository;
 import lombok.extern.slf4j.Slf4j;

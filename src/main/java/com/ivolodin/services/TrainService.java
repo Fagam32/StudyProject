@@ -1,12 +1,12 @@
 package com.ivolodin.services;
 
-import com.ivolodin.dto.StationDto;
-import com.ivolodin.dto.TrainDto;
-import com.ivolodin.dto.TrainEdgeDto;
-import com.ivolodin.entities.Station;
-import com.ivolodin.entities.Train;
-import com.ivolodin.entities.TrainEdge;
-import com.ivolodin.exceptions.PathNotExistException;
+import com.ivolodin.model.dto.StationDto;
+import com.ivolodin.model.dto.TrainDto;
+import com.ivolodin.model.dto.TrainEdgeDto;
+import com.ivolodin.model.entities.Station;
+import com.ivolodin.model.entities.Train;
+import com.ivolodin.model.entities.TrainEdge;
+import com.ivolodin.model.exceptions.PathNotExistException;
 import com.ivolodin.repositories.StationRepository;
 import com.ivolodin.repositories.TrainEdgeRepository;
 import com.ivolodin.repositories.TrainRepository;

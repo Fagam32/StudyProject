@@ -1,6 +1,6 @@
 package com.ivolodin.controller;
 
-import com.ivolodin.dto.StationConnectDto;
+import com.ivolodin.model.dto.StationConnectDto;
 import com.ivolodin.services.EdgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

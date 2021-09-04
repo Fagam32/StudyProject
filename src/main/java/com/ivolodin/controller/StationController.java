@@ -1,9 +1,9 @@
 package com.ivolodin.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.ivolodin.dto.StationDto;
-import com.ivolodin.dto.TrainDto;
-import com.ivolodin.dto.View;
+import com.ivolodin.model.dto.StationDto;
+import com.ivolodin.model.dto.TrainDto;
+import com.ivolodin.model.dto.View;
 import com.ivolodin.services.StationService;
 import com.ivolodin.services.TrainService;
 import org.springframework.beans.factory.annotation.Autowired;

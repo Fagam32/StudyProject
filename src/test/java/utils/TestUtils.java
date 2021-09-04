@@ -1,12 +1,12 @@
 package utils;
 
-import com.ivolodin.dto.TicketDto;
-import com.ivolodin.dto.TrainDto;
-import com.ivolodin.dto.TrainEdgeDto;
-import com.ivolodin.entities.Station;
-import com.ivolodin.entities.Train;
-import com.ivolodin.entities.TrainEdge;
-import com.ivolodin.entities.User;
+import com.ivolodin.model.dto.TicketDto;
+import com.ivolodin.model.dto.TrainDto;
+import com.ivolodin.model.dto.TrainEdgeDto;
+import com.ivolodin.model.entities.Station;
+import com.ivolodin.model.entities.Train;
+import com.ivolodin.model.entities.TrainEdge;
+import com.ivolodin.model.entities.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

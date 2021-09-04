@@ -1,8 +1,8 @@
 package com.ivolodin.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.ivolodin.dto.TicketDto;
-import com.ivolodin.dto.View;
+import com.ivolodin.model.dto.TicketDto;
+import com.ivolodin.model.dto.View;
 import com.ivolodin.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

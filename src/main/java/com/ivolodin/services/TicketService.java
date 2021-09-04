@@ -1,7 +1,7 @@
 package com.ivolodin.services;
 
-import com.ivolodin.dto.TicketDto;
-import com.ivolodin.entities.*;
+import com.ivolodin.model.dto.TicketDto;
+import com.ivolodin.model.entities.*;
 import com.ivolodin.repositories.StationRepository;
 import com.ivolodin.repositories.TicketRepository;
 import com.ivolodin.repositories.TrainRepository;

@@ -1,22 +1,25 @@
 package service;
 
 import com.ivolodin.TrainStationApp;
-import com.ivolodin.dto.TrainDto;
-import com.ivolodin.entities.Station;
-import com.ivolodin.entities.Train;
-import com.ivolodin.entities.TrainEdge;
+import com.ivolodin.model.dto.TrainDto;
+import com.ivolodin.model.entities.Station;
+import com.ivolodin.model.entities.Train;
+import com.ivolodin.model.entities.TrainEdge;
 import com.ivolodin.repositories.StationRepository;
 import com.ivolodin.repositories.TrainEdgeRepository;
 import com.ivolodin.repositories.TrainRepository;
 import com.ivolodin.services.EdgeService;
 import com.ivolodin.services.GraphService;
 import com.ivolodin.services.TrainService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import utils.TestUtils;
 
 import javax.persistence.EntityNotFoundException;
@@ -28,36 +31,39 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static utils.TestUtils.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = TrainStationApp.class)
+@ExtendWith(MockitoExtension.class)
 public class TrainServiceTest {
 
     private static final String TRAIN_NAME = TestUtils.TRAIN_NAME;
 
     private static final LocalDateTime DEPARTING_TIME = TestUtils.DEPARTING_TIME;
 
-    @Autowired
+    @InjectMocks
     private TrainService trainService;
 
-    @MockBean
+    @Mock
     private StationRepository stationRepository;
 
-    @MockBean
+    @Mock
     private TrainRepository trainRepository;
 
-    @MockBean
+    @Mock
     private GraphService graphService;
 
-    @MockBean
+    @Mock
     private EdgeService edgeService;
 
-    @MockBean
+    @Mock
     private TrainEdgeRepository trainEdgeRepository;
+
+    @Mock
+    private AmqpTemplate template;
 
     @Test
     public void addNewTrain() {
@@ -79,6 +85,7 @@ public class TrainServiceTest {
         when(edgeService.getDistanceBetweenStations(first, second)).thenReturn(10);
         when(edgeService.getDistanceBetweenStations(second, third)).thenReturn(10);
         when(trainRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        doNothing().when(template).convertAndSend(anyString(), anyString());
 
         TrainDto inputTrain = new TrainDto();
         inputTrain.setTrainName(TRAIN_NAME);
@@ -103,10 +110,6 @@ public class TrainServiceTest {
         assertThrows(DateTimeException.class, () -> trainService.addNewTrain(actual));
 
         actual.setDeparture(DEPARTING_TIME);
-        assertThrows(IllegalArgumentException.class, () -> trainService.addNewTrain(actual));
-
-        when(trainRepository.findTrainByTrainName(eq(TRAIN_NAME))).thenReturn(notNull());
-
         assertThrows(IllegalArgumentException.class, () -> trainService.addNewTrain(actual));
     }
 

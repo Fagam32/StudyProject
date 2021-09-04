@@ -1,13 +1,13 @@
 package com.ivolodin.utils;
 
-import com.ivolodin.dto.StationConnectDto;
-import com.ivolodin.dto.TicketDto;
-import com.ivolodin.dto.TrainDto;
-import com.ivolodin.dto.UserInfoDto;
-import com.ivolodin.entities.StationConnect;
-import com.ivolodin.entities.Ticket;
-import com.ivolodin.entities.Train;
-import com.ivolodin.entities.User;
+import com.ivolodin.model.dto.StationConnectDto;
+import com.ivolodin.model.dto.TicketDto;
+import com.ivolodin.model.dto.TrainDto;
+import com.ivolodin.model.dto.UserInfoDto;
+import com.ivolodin.model.entities.StationConnect;
+import com.ivolodin.model.entities.Ticket;
+import com.ivolodin.model.entities.Train;
+import com.ivolodin.model.entities.User;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;

@@ -1,7 +1,7 @@
 package com.ivolodin.services;
 
-import com.ivolodin.dto.StationDto;
-import com.ivolodin.entities.Station;
+import com.ivolodin.model.dto.StationDto;
+import com.ivolodin.model.entities.Station;
 import com.ivolodin.repositories.StationRepository;
 import com.ivolodin.repositories.TrainEdgeRepository;
 import com.ivolodin.utils.MapperUtils;

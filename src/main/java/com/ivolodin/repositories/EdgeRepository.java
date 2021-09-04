@@ -1,7 +1,7 @@
 package com.ivolodin.repositories;
 
-import com.ivolodin.entities.Station;
-import com.ivolodin.entities.StationConnect;
+import com.ivolodin.model.entities.Station;
+import com.ivolodin.model.entities.StationConnect;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EdgeRepository extends JpaRepository<StationConnect, Integer> {
